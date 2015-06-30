@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
+import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.Entity;
 
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
-public class UsergridVertex extends Entity implements Vertex {
+public class UsergridVertex extends Entity implements Vertex , UsergridChangedThing{
   private static String defaultType;
 
   public UsergridVertex(String defaultType) {
@@ -46,8 +47,13 @@ public class UsergridVertex extends Entity implements Vertex {
     return null;
   }
 
-  public void setProperty(String key, Object value) {
+  public void onChanged(Client client)
+  {
 
+  }
+
+  public void setProperty(String key, Object value) {
+    Client.changed(this);
   }
 
   public <T> T removeProperty(String key) {
