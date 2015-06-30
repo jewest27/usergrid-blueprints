@@ -203,22 +203,78 @@ public class UsergridGraph implements Graph {
     return null;
   }
 
+
+  /**
+   *
+   * This function adds a connection (or an edge) betwwen two vertices
+   *
+   * @param id
+   * @param outVertex
+   * @param inVertex
+   * @param label
+   * @return
+   */
   public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+
+    /*
+    1.Check client initialized.
+    2.Check if the two vertices are valid. (get uuid to verify this)
+    3.Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
+    4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
+     */
     return null;
   }
+
+  /**
+   * This function returns a connection (or edge). Takes the Connection id as an input.
+   * @param id
+   * @return
+   */
 
   public Edge getEdge(Object id) {
+
+    /*
+    1. Get the client. Check if client initialzed.
+    2. Get the edge using the uuid. // TODO : how to retrieve an edge in usergrid.
+    3. Return the edge.
+     */
     return null;
   }
 
+  /**
+   *
+   * This function removes the connection between two entities in the graph
+   * @param edge
+   */
   public void removeEdge(Edge edge) {
 
+    /*
+    1. Get the client. Check if its intitialzed.
+    2. Get the connection(or edge) by the uuid //TODO : how to retrieve an edge.
+    3. Check if the edge is a valid edge.
+    4. call disconnectEntities(String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
+
+    */
   }
+
+  /**
+   * Return an iterable to all the edges in the graph.
+   *
+   * @return
+   */
 
   public Iterable<Edge> getEdges() {
     return null;
   }
 
+  /**
+   *
+   * Return an iterable to all the edges in the graph that have a particular key/value property.
+   *
+   * @param key
+   * @param value
+   * @return
+   */
   public Iterable<Edge> getEdges(String key, Object value) {
     return null;
   }
