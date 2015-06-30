@@ -27,6 +27,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
     return null;
   }
 
+
   public Iterable<Vertex> getVertices(Direction direction, String... labels) {
     return null;
   }

@@ -270,9 +270,10 @@ public class UsergridGraph implements Graph {
   public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
 
     /*
-    1.Check client initialized.
-    2.Check if the two vertices are valid. (get uuid to verify this)
-    3.Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
+    1. Check client initialized.
+    2. Check if the two vertices are valid.
+    3. Retrieve the EntityIds of the two entities
+    3. Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
     4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
      */
     return null;
@@ -288,9 +289,11 @@ public class UsergridGraph implements Graph {
   public Edge getEdge(Object id) {
 
     /*
+    //TODO: Define the ObjectId for an edge, liek how we have for a vertex.
+
     1. Get the client. Check if client initialzed.
-    2. Get the edge using the uuid. // TODO : how to retrieve an edge in usergrid.
-    3. Return the edge.
+    2. Get the edge using the type of the edge. // TODO : how to retrieve an edge in usergrid. multiple edges have the same name, how to distinguish ?
+    3. Return the connection(or edge).
      */
     return null;
   }
@@ -304,7 +307,7 @@ public class UsergridGraph implements Graph {
 
     /*
     1. Get the client. Check if its intitialzed.
-    2. Get the connection(or edge) by the uuid //TODO : how to retrieve an edge.
+    2. Get the connection(or edge) by the Id //TODO : how to retrieve an edge.
     3. Check if the edge is a valid edge.
     4. call disconnectEntities(String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
 
@@ -322,8 +325,8 @@ public class UsergridGraph implements Graph {
   }
 
   /**
+   * Not implemented for Usergrid.
    * Return an iterable to all the edges in the graph that have a particular key/value property.
-   *
    * @param key
    * @param value
    * @return
@@ -332,11 +335,21 @@ public class UsergridGraph implements Graph {
     throw new UnsupportedOperationException("Not supported for Usergrid");
   }
 
+
+
   public GraphQuery query() {
     return null;
   }
 
+  /**
+   * Closes the client connection. Properly close the graph.
+   *
+   */
   public void shutdown() {
-
+    /*
+    1. Check the client initialized.
+    2. Close the connection to Usergrid.
+    3. Error handling if closeConnection() failed.
+     */
   }
 }
