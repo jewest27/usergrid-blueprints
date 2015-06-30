@@ -212,8 +212,9 @@ public class UsergridGraph implements Graph {
 
     /*
      1) Check if client is initialized
-     2) Check that id is a string (type)
+     2) Check that id is of supported type, else throw IllegalArgumentException error
      3) Create the entity using - ApiResponse createEntity(Map<String, Object> properties)
+      in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
 
@@ -233,9 +234,9 @@ public class UsergridGraph implements Graph {
 
     /*
      1) Check if client is initialized
-     2) Check that id is a string (type)
-     3) Get and return the entity - Query queryEntitiesRequest(HttpMethod method,
-                                    Map<String, Object> params, Object data, String... segments)
+     2) Check that id is of supported type, else throw IllegalArgumentException error
+     3) Get and return the entity - Query queryEntitiesRequest(HttpMethod method,Map<String,
+     Object> params, Object data, String... segments) in org.apache.usergrid.java.client
      4) Return null if no vertex is referenced by the identifier
      */
 
@@ -251,7 +252,7 @@ public class UsergridGraph implements Graph {
   }
 
   /**
-   * This gets a particular vertex using the Entity ID
+   * This gets a particular vertex using the Entity ID.
    * @param id
    * @return
    */
@@ -266,7 +267,7 @@ public class UsergridGraph implements Graph {
   }
 
   /**
-   * This gets a vertex by ID (name)
+   * This gets a vertex by ID (String)
    * @param id
    * @return
    */
@@ -290,9 +291,10 @@ public class UsergridGraph implements Graph {
      /*
      1) Check if client is initialized
      2) Check if vertex exists
-     3) Delete all edges connected to the vertex
-     4) Delete the vertex
-     4) Return null if no vertex is referenced by the identifier
+     3) Delete all edges connected to the vertex using disconnectEntities(String connectingEntityType,
+     String connectingEntityId, String connectionType, String connectedEntityId) in org.apache.usergrid.java.client
+     4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
+     5) Return null if no vertex is referenced by the identifier
      */
 
   }

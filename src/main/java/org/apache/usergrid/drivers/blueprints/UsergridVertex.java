@@ -24,12 +24,20 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
   }
 
   /**
-   * This gets edges that are connected to the vertex in a particular direction specified, and having a specific label
+   * This gets edges that are connected to the vertex in a
+   * particular direction specified, and having a specific label
    * @param direction
    * @param labels
    * @return
    */
   public Iterable<Edge> getEdges(Direction direction, String... labels) {
+      /**
+       1) Check if the vertex exists
+       2) Get the UUIDs of edges that are connected to the
+       particular vertex in a particular direction and with a particular label
+       3) Return an iterable of edges
+       */
+
     return null;
   }
 
@@ -40,6 +48,13 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public Iterable<Vertex> getVertices(Direction direction, String... labels) {
+      /**
+       1) Check if the vertex exists
+       2) Get the UUIDs of edges that are connected to the
+       particular vertex in a particular direction and with a particular label
+       3)Get the vertices at the other end of the edge
+       4) Return an iterable of vertices
+       */
     return null;
   }
 
@@ -53,6 +68,13 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
   }
 
   public Edge addEdge(String label, Vertex inVertex) {
+      /**
+       1) Check if the vertex exists
+       2) Use the following to add an edge - connectEntities( String connectingEntityType,String
+       connectingEntityId, String connectionType, String connectedEntityId) in org.apache.usergrid.java.client
+       3) Return the newly created edge
+       */
+
     return null;
   }
 
@@ -63,6 +85,13 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public <T> T getProperty(String key) {
+      /**
+       1) Check if the vertex exists
+       2) Use the void setProperty(String name, float/String/long/int/boolean/JsonNode value) in
+       org.apache.usergrid.java.client.entities
+       3) If any other type throw an error
+       */
+
     return null;
   }
 
