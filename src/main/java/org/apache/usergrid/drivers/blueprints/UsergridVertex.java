@@ -23,14 +23,31 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
     UsergridVertex.defaultType = defaultType;
   }
 
+  /**
+   * This gets edges that are connected to the vertex in a particular direction specified, and having a specific label
+   * @param direction
+   * @param labels
+   * @return
+   */
   public Iterable<Edge> getEdges(Direction direction, String... labels) {
     return null;
   }
 
+  /**
+   * This gets all the adjacent vertices connected to the vertex by an edge specified by a particular direction and label
+   * @param direction
+   * @param labels
+   * @return
+   */
   public Iterable<Vertex> getVertices(Direction direction, String... labels) {
     return null;
   }
 
+  /**
+   * Generate a query object that can be
+   * used to fine tune which connections/entities are retrieved that are incident/adjacent to this entity.
+   * @return
+   */
   public VertexQuery query() {
     return null;
   }
@@ -39,10 +56,20 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
     return null;
   }
 
+  /**
+   * Get a particular property of a vertex specified by a key
+   * @param key
+   * @param <T>
+   * @return
+   */
   public <T> T getProperty(String key) {
     return null;
   }
 
+  /**
+   * Get all the property keys for a particular vertex
+   * @return
+   */
   public Set<String> getPropertyKeys() {
     return null;
   }
@@ -52,10 +79,21 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
 
   }
 
+  /**
+   * This sets a particular value of a property using the specified key
+   * @param key
+   * @param value
+   */
   public void setProperty(String key, Object value) {
     Client.changed(this);
   }
 
+  /**
+   * Remove a particular property as specified by the key
+   * @param key
+   * @param <T>
+   * @return
+   */
   public <T> T removeProperty(String key) {
     return null;
   }
@@ -64,10 +102,18 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
 
   }
 
+  /**
+   * This gets the Id of the vertex
+   * @return
+   */
   public Object getId() {
     return null;
   }
 
+  /**
+   * This sets the type of vertex (the collection)
+   * @param newType
+   */
   @Override
   public void setType(String newType) {
     if (newType.equals(super.getType())) {
