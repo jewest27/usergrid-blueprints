@@ -41,6 +41,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
     return null;
   }
 
+
   /**
    * This gets all the adjacent vertices connected to the vertex by an edge specified by a particular direction and label
    * @param direction
