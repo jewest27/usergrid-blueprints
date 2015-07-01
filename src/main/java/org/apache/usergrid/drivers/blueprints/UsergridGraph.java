@@ -189,6 +189,7 @@ public class UsergridGraph implements Graph {
   }
 
   /**
+   * This returns all the features that the Blueprint supports for Usergrid.
    * @return
    */
   public Features getFeatures() {
@@ -197,8 +198,8 @@ public class UsergridGraph implements Graph {
 
 
   /**
-   * This will call the client and create a new entity in the default collection
-   * using the ID.toString() as the name of the entitiy.
+   * This calls the client and create a new entity in the default collection
+   * using the ID.toString() as the name of the entity. It returns the newly created vertex.
    *
    * @param id - The value of id.toString would be used for the name
    * @return the newly created vertex
@@ -210,10 +211,11 @@ public class UsergridGraph implements Graph {
       v.post();
 
     /*
-     1) check client initialized
-     2) check that id is a string (type)
-     3) create the entity
-     4)
+     1) Check if client is initialized
+     2) Check that id is of supported type, else throw IllegalArgumentException error
+     3) Create the entity using - ApiResponse createEntity(Map<String, Object> properties)
+      in org.apache.usergrid.java.client
+     4) Return the newly created vertex
      */
 
       return v;
@@ -222,8 +224,21 @@ public class UsergridGraph implements Graph {
     throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
   }
 
+  /**
+   * This gets a particular Vertex (entity) using the ID of the vertex
+   * @param id
+   * @return
+   */
   //new SimpleId("user", new UUID())
   public Vertex getVertex(Object id) {
+
+    /*
+     1) Check if client is initialized
+     2) Check that id is of supported type, else throw IllegalArgumentException error
+     3) Get and return the entity - Query queryEntitiesRequest(HttpMethod method,Map<String,
+     Object> params, Object data, String... segments) in org.apache.usergrid.java.client
+     4) Return null if no vertex is referenced by the identifier
+     */
 
     if (id instanceof String) {
       return getVertexByString((String) id);
@@ -236,30 +251,82 @@ public class UsergridGraph implements Graph {
     throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
   }
 
+  /**
+   * This gets a particular vertex using the Entity ID.
+   * @param id
+   * @return
+   */
   private Vertex getVertexByEntityId(EntityId id) {
+     /*
+     1) Check if client is initialized
+     2) Check that id is of EntityId (type)
+     3) Get and return the entity
+     4) Return null if no vertex is referenced by the identifier
+     */
     return null;
   }
 
+  /**
+   * This gets a vertex by ID (String)
+   * @param id
+   * @return
+   */
   private Vertex getVertexByString(String id) {
+     /*
+     1) Check if client is initialized
+     2) Check that id is a string (type)
+     3) Get and return the entity
+     4) Return null if no vertex is referenced by the identifier
+     */
     return null;
   }
 
+  /**
+   * This deletes a particular vertex (entity) by taking the vertex as an identifier
+   * @param vertex
+   */
   public void removeVertex(Vertex vertex) {
 
+
+     /*
+     1) Check if client is initialized
+     2) Check if vertex exists
+     3) Delete all edges connected to the vertex using disconnectEntities(String connectingEntityType,
+     String connectingEntityId, String connectionType, String connectedEntityId) in org.apache.usergrid.java.client
+     4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
+     5) Return null if no vertex is referenced by the identifier
+     */
+
   }
 
+  /**
+   * {
+   throw new UnsupportedOperationException("Not supported for Usergrid");
+   }
+   * Returns an iterable to all the vertices in the graph.
+   * @return
+   */
   public Iterable<Vertex> getVertices() {
     // need to be able to page
     return null;
   }
 
+  /**
+   * {
+   throw new UnsupportedOperationException("Not supported for Usergrid");
+   }
+   * Return an iterable to all the vertices in the graph that have a particular key/value property.
+   * @param key
+   * @param value
+   * @return
+   */
   public Iterable<Vertex> getVertices(String key, Object value) {
     return null;
   }
 
 
   /**
-   * This function adds a connection (or an edge) betwwen two vertices
+   * This function adds a connection (or an edge) between two vertices
    *
    * @param id
    * @param outVertex
