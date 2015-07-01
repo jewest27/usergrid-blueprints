@@ -245,9 +245,13 @@ public class UsergridGraph implements Graph {
 
 
 //
-//    if (id instanceof String) {
-      UsergridVertex v = new UsergridVertex(defaultType);
-//      v.post();
+//   assertClientInitialized();
+
+      if (id instanceof String) {
+          UsergridVertex v = new UsergridVertex(defaultType);
+          client.createEntity(v);
+          v.save();
+          return v;
 
 
     /*
