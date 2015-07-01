@@ -242,7 +242,7 @@ public class UsergridGraph implements Graph {
               client.createEntity(v);
               v.save();
               return v;
-              
+
 
 
     /*
@@ -259,8 +259,6 @@ public class UsergridGraph implements Graph {
 
   }
 
-//    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
-//  }
 
 
     protected void assertClientInitialized() {
@@ -275,7 +273,7 @@ public class UsergridGraph implements Graph {
    * @param id
    * @return
    */
-  //new SimpleId("user", new UUID())
+
   public Vertex getVertex(Object id) {
 
     /*
@@ -303,17 +301,7 @@ public class UsergridGraph implements Graph {
    * @return
    */
 
-  private Vertex getVertexByEntityId(EntityId id) {
 
-     /*
-     1) Check if client is initialized
-     2) Check that id is of EntityId (type)
-     3) Get and return the entity
-     4) Return null if no vertex is referenced by the identifier
-     */
-    return null;
-  }
-=======
 //  private Vertex getVertexByEntityId(EntityId id) {
 //     /*
 //     1) Check if client is initialized
@@ -344,6 +332,7 @@ public class UsergridGraph implements Graph {
    * This deletes a particular vertex (entity) by taking the vertex as an identifier
    * @param vertex
    */
+
   public void removeVertex(Vertex vertex) {
 
 
