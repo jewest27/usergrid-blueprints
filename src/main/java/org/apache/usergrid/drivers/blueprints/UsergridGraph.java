@@ -1,12 +1,15 @@
 package org.apache.usergrid.drivers.blueprints;
 
 import com.sun.javaws.exceptions.InvalidArgumentException;
+import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.tinkerpop.blueprints.*;
 import org.apache.commons.configuration.Configuration;
 import org.apache.usergrid.java.client.Client;
-import org.apache.usergrid.java.client.model.EntityId;
+import org.apache.usergrid.java.client.SingletonClient;
+//import org.apache.usergrid.java.client.model.EntityId;
 
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -180,12 +183,37 @@ public class UsergridGraph implements Graph {
   private Client client;
   private String defaultType;
 
+  protected  void getClient(){
+
+  }
   /**
    * @param config
    */
   public UsergridGraph(Configuration config) {
+
+
+    if(config == null){
+      throw new IllegalArgumentException("Check the configuration settings");
+    }
     this.defaultType = config.getString("usergrid.defaultType");
-    System.out.println(config.getString("usergrid.defaultType"));
+
+    String orgName = config.getString("usergrid.organization");
+    String appName = config.getString("usergrid.application");
+    String apiUrl = config.getString("usergrid.apiUrl");
+
+    if(orgName == null || appName == null) {
+      throw new RuntimeException("Check the configuration settings. OrgName or App name is null");
+    }
+
+    if(apiUrl == null)
+      SingletonClient.initialize(orgName, appName);
+    else
+      SingletonClient.initialize(apiUrl, orgName, appName);
+
+    client = SingletonClient.getInstance();
+    System.out.println("Application id : " + client.getApplicationId());
+
+
   }
 
   /**
@@ -205,10 +233,10 @@ public class UsergridGraph implements Graph {
    * @return the newly created vertex
    */
   public Vertex addVertex(Object id) {
-
-    if (id instanceof String) {
+//
+//    if (id instanceof String) {
       UsergridVertex v = new UsergridVertex(defaultType);
-      v.post();
+//      v.post();
 
     /*
      1) Check if client is initialized
@@ -221,8 +249,8 @@ public class UsergridGraph implements Graph {
       return v;
     }
 
-    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
-  }
+//    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
+//  }
 
   /**
    * This gets a particular Vertex (entity) using the ID of the vertex
@@ -240,13 +268,13 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-    if (id instanceof String) {
-      return getVertexByString((String) id);
-    } else {
-      if (id instanceof EntityId) {
-        return getVertexByEntityId((EntityId) id);
-      }
-    }
+//    if (id instanceof String) {
+//      return getVertexByString((String) id);
+//    } else {
+//      if (id instanceof EntityId) {
+//        return getVertexByEntityId((EntityId) id);
+//      }
+//    }
 
     throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
   }
@@ -256,15 +284,15 @@ public class UsergridGraph implements Graph {
    * @param id
    * @return
    */
-  private Vertex getVertexByEntityId(EntityId id) {
-     /*
-     1) Check if client is initialized
-     2) Check that id is of EntityId (type)
-     3) Get and return the entity
-     4) Return null if no vertex is referenced by the identifier
-     */
-    return null;
-  }
+//  private Vertex getVertexByEntityId(EntityId id) {
+//     /*
+//     1) Check if client is initialized
+//     2) Check that id is of EntityId (type)
+//     3) Get and return the entity
+//     4) Return null if no vertex is referenced by the identifier
+//     */
+//    return null;
+//  }
 
   /**
    * This gets a vertex by ID (String)
@@ -296,6 +324,8 @@ public class UsergridGraph implements Graph {
      4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
      5) Return null if no vertex is referenced by the identifier
      */
+
+
 
   }
 
@@ -343,6 +373,13 @@ public class UsergridGraph implements Graph {
     3. Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
     4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
      */
+
+    client.assertValidApplicationId();
+
+    if (label == null)
+      throw new IllegalArgumentException("label not specified");
+
+//    if (outVertex.)
     return null;
   }
 

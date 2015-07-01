@@ -10,7 +10,24 @@ import java.util.Set;
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
-public class UsergridEdge extends Edge implements UsergridChangedThing{
+public class UsergridEdge implements UsergridChangedThing, Edge {
+
+
+  /**
+   *
+   * Return the label associated with the edge.
+   *
+   * @return
+   */
+  public String getLabel() {
+
+    /*
+    1. get the client connection. check if its initialized.
+    2. get the timestamp associated with the entity. // Confirm.
+     */
+
+    return null;
+  }
 
 
   public void onChanged(Client client) {
@@ -40,22 +57,6 @@ public class UsergridEdge extends Edge implements UsergridChangedThing{
           //TODO : for BOTH
      */
 
-    return null;
-  }
-
-
-  /**
-   *
-   * Return the label associated with the edge.
-   *
-   * @return
-   */
-  public String getLabel() {
-
-    /*
-    1. get the client connection. check if its initialized.
-    2. get the timestamp associated with the entity. // Confirm.
-     */
 
     return null;
   }
