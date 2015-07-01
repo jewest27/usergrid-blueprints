@@ -191,7 +191,7 @@ public class UsergridGraph implements Graph {
    */
   public UsergridGraph(Configuration config) {
 
-
+//TODO: Change to appropriate location
     if(config == null){
       throw new IllegalArgumentException("Check the configuration settings");
     }
@@ -200,6 +200,9 @@ public class UsergridGraph implements Graph {
     String orgName = config.getString("usergrid.organization");
     String appName = config.getString("usergrid.application");
     String apiUrl = config.getString("usergrid.apiUrl");
+      String clientId = config.getString("usergrid.client_id");
+      String clientSecret = config.getString("usergrid.client_secret");
+
 
     if(orgName == null || appName == null) {
       throw new RuntimeException("Check the configuration settings. OrgName or App name is null");
@@ -211,7 +214,8 @@ public class UsergridGraph implements Graph {
       SingletonClient.initialize(apiUrl, orgName, appName);
 
     client = SingletonClient.getInstance();
-    System.out.println("Application id : " + client.getApplicationId());
+
+      client.authorizeAppClient(clientId,clientSecret);
 
 
   }
@@ -234,28 +238,33 @@ public class UsergridGraph implements Graph {
    */
   public Vertex addVertex(Object id) {
 
-
-      assertClientInitialized();
-
-          if (id instanceof String) {
-              UsergridVertex v = new UsergridVertex(defaultType);
-              client.createEntity(v);
-              v.save();
-              return v;
-
-
-
-    /*
+      /*
      1) Check if client is initialized
      2) Check that id is of supported type, else throw IllegalArgumentException error
      3) Create the entity using - ApiResponse createEntity(Map<String, Object> properties)
       in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
+
+      assertClientInitialized();
+
+          if (id instanceof String) {
+              UsergridVertex v = new UsergridVertex("person");
+              client.createEntity(v);
+              v.save();
+              return v;
           }
+          /*
+          else if (id instanceof EntityId){
+              //TODO: Add logic that separates the type and entity ID and use the type during creation
+              UsergridVertex v = new UsergridVertex(defaultType);
+              client.createEntity(v);
+              v.save();
+              return v;
 
+      }
+*/
           throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
-
 
   }
 
@@ -325,6 +334,9 @@ public class UsergridGraph implements Graph {
      3) Get and return the entity
      4) Return null if no vertex is referenced by the identifier
      */
+
+
+
     return null;
   }
 
