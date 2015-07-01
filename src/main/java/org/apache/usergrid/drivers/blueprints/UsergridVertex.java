@@ -116,7 +116,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @param value
    */
   public void setProperty(String key, Object value) {
-    Client.changed(this);
+//    Client.changed(this);
   }
 
   /**
