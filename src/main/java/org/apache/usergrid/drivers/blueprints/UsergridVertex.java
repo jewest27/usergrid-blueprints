@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.VertexQuery;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.Entity;
 
+
 import java.util.Set;
 
 /**
@@ -18,7 +19,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
   public UsergridVertex(String defaultType) {
     super.setType(defaultType);
   }
-
+    
   public static void setDefaultType(String defaultType) {
     UsergridVertex.defaultType = defaultType;
   }
@@ -32,7 +33,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    */
   public Iterable<Edge> getEdges(Direction direction, String... labels) {
       /**
-       1) Check if the vertex exists
+       1) Check if the vertex exists.
        2) Get the UUIDs of edges that are connected to the
        particular vertex in a particular direction and with a particular label
        3) Return an iterable of edges

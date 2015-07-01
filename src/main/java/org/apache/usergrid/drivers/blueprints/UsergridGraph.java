@@ -206,9 +206,14 @@ public class UsergridGraph implements Graph {
    */
   public Vertex addVertex(Object id) {
 
-    if (id instanceof String) {
-      UsergridVertex v = new UsergridVertex(defaultType);
-      v.post();
+      assertClientInitialized();
+
+          if (id instanceof String) {
+              UsergridVertex v = new UsergridVertex(defaultType);
+              client.createEntity(v);
+              v.save();
+              return v;
+
 
     /*
      1) Check if client is initialized
@@ -217,12 +222,18 @@ public class UsergridGraph implements Graph {
       in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
+          }
 
-      return v;
-    }
+          throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
 
-    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
   }
+
+    protected void assertClientInitialized() {
+        if (client==null) {
+            //TODO: Initialize client? OR throw exception?
+            throw new IllegalArgumentException("Client is not initialized");
+        }
+    }
 
   /**
    * This gets a particular Vertex (entity) using the ID of the vertex
@@ -257,6 +268,7 @@ public class UsergridGraph implements Graph {
    * @return
    */
   private Vertex getVertexByEntityId(EntityId id) {
+
      /*
      1) Check if client is initialized
      2) Check that id is of EntityId (type)
