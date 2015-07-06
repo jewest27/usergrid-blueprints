@@ -4,14 +4,22 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.usergrid.java.client.Client;
-
+import org.apache.usergrid.java.client.entities.*;
 import java.util.Set;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
-public class UsergridEdge implements UsergridChangedThing, Edge {
+public class UsergridEdge extends Connection implements UsergridChangedThing,Edge {
 
+
+  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label) {
+
+    String sourceID = outV.getType()+outV.getStringProperty("name");
+    String targetId = inV.getType()+inV.getStringProperty("name");
+
+    super.setID(sourceID,label,targetId);
+  }
 
   /**
    *
