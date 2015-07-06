@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.*;
 import org.apache.commons.configuration.Configuration;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.SingletonClient;
+import org.apache.usergrid.java.client.response.ApiResponse;
 //import org.apache.usergrid.java.client.model.EntityId;
 
 import java.util.Iterator;
@@ -293,16 +294,22 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-//    if (id instanceof String) {
-//      return getVertexByString((String) id);
-//    } else {
-//      if (id instanceof EntityId) {
-//        return getVertexByEntityId((EntityId) id);
-//      }
-//    }
+
+    if (id instanceof String) {
+      return getVertexByString((String) id);
+    } else {
+      if (id instanceof EntityId) {
+        return getVertexByEntityId((EntityId) id);
+      }
+    }
 
     throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
   }
+
+
+
+//      return getVertexByEntityId((EntityId) id);
+//  }
 
   /**
    * This gets a particular vertex using the Entity ID.
@@ -311,7 +318,7 @@ public class UsergridGraph implements Graph {
    */
 
 
-//  private Vertex getVertexByEntityId(EntityId id) {
+  private Vertex getVertexByEntityId(EntityId id)
 //     /*
 //     1) Check if client is initialized
 //     2) Check that id is of EntityId (type)
@@ -320,6 +327,16 @@ public class UsergridGraph implements Graph {
 //     */
 //    return null;
 //  }
+  {
+
+
+      ApiResponse response = SingletonClient.getInstance().queryEntity(id.type,id.UUID);
+      String uuid = response.getFirstEntity().getStringProperty("uuid");
+      UsergridVertex v = new UsergridVertex(id.type) ;
+      v.setUuid(UUID.fromString(uuid));
+      return v;
+
+  }
 
 
   /**
@@ -335,9 +352,17 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
+      String[] parts = id.split(":");
+      String type = parts[0];
+      String StringUUID = parts[1];
+      ApiResponse response = SingletonClient.getInstance().queryEntity(type,StringUUID);
+      String uuid = response.getFirstEntity().getStringProperty("uuid");
+      UsergridVertex v = new UsergridVertex(type) ;
+      v.setUuid(UUID.fromString(uuid));
+      return v;
 
 
-    return null;
+
   }
 
   /**
