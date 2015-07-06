@@ -296,25 +296,27 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-//    if (id instanceof String) {
-//      return getVertexByString((String) id);
-//    } else {
-//      if (id instanceof EntityId) {
-//        return getVertexByEntityId((EntityId) id);
-//      }
-//    }
+
+    if (id instanceof String) {
+      return getVertexByString((String) id);
+    } else {
+      if (id instanceof EntityId) {
+        return getVertexByEntityId((EntityId) id);
+      }
+    }
 
         throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
     }
 
-    /**
-     * This gets a particular vertex using the Entity ID.
-     * @param id
-     * @return
-     */
 
 
-//  private Vertex getVertexByEntityId(EntityId id) {
+  /**
+   * This gets a particular vertex using the Entity ID.
+   * @param id
+   * @return
+   */
+
+  private Vertex getVertexByEntityId(EntityId id)
 //     /*
 //     1) Check if client is initialized
 //     2) Check that id is of EntityId (type)
@@ -323,6 +325,16 @@ public class UsergridGraph implements Graph {
 //     */
 //    return null;
 //  }
+  {
+
+
+      ApiResponse response = SingletonClient.getInstance().queryEntity(id.type,id.UUID);
+      String uuid = response.getFirstEntity().getStringProperty("uuid");
+      UsergridVertex v = new UsergridVertex(id.type) ;
+      v.setUuid(UUID.fromString(uuid));
+      return v;
+
+  }
 
 
     /**
@@ -339,15 +351,23 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
+      String[] parts = id.split(":");
+      String type = parts[0];
+      String StringUUID = parts[1];
+      ApiResponse response = SingletonClient.getInstance().queryEntity(type,StringUUID);
+      String uuid = response.getFirstEntity().getStringProperty("uuid");
+      UsergridVertex v = new UsergridVertex(type) ;
+      v.setUuid(UUID.fromString(uuid));
+      return v;
 
-        return null;
     }
 
-    /**
-     * This deletes a particular vertex (entity) by taking the vertex as an identifier
-     *
-     * @param vertex
-     */
+
+
+  /**
+   * This deletes a particular vertex (entity) by taking the vertex as an identifier
+   * @param vertex
+   */
 
     public void removeVertex(Vertex vertex) {
 
