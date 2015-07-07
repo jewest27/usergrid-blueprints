@@ -138,7 +138,12 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public Object getId() {
-    return null;
+
+      String type = this.getType();
+      String StringUUID = this.getUuid().toString();
+      String id = type+":"+StringUUID;
+      return id;
+
   }
 
   /**

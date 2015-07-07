@@ -252,12 +252,19 @@ public class UsergridGraph implements Graph {
 
         assertClientInitialized();
 
-        if (id instanceof String) {
-            UsergridVertex v = new UsergridVertex("person");
-            client.createEntity(v);
-            v.save();
-            return v;
-        }
+
+          if (id instanceof String) {
+              String[] parts = id.toString().split(":");
+              String type = parts[0];
+              String StringUUID = parts[1];
+              UsergridVertex v = new UsergridVertex(type);
+              client.createEntity(v);
+              v.save();
+              v.setProperty("name",StringUUID);
+              return v;
+          }
+
+
           /*
           else if (id instanceof EntityId){
               //TODO: Add logic that separates the type and entity ID and use the type during creation
@@ -370,7 +377,6 @@ public class UsergridGraph implements Graph {
 
     public void removeVertex(Vertex vertex) {
 
-
      /*
      1) Check if client is initialized
      2) Check if vertex exists
@@ -379,9 +385,35 @@ public class UsergridGraph implements Graph {
      4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
      5) Return null if no vertex is referenced by the identifier
      */
+      String id = vertex.getId().toString();
+      String[] parts = id.split(":");
+      String type = parts[0];
+      String StringUUID = parts[1];
+      ApiResponse response = SingletonClient.getInstance().deleteEntity(type, StringUUID);
+      System.out.println(response);
 
 
     }
+
+
+
+
+
+
+  /**
+   * {
+   throw new UnsupportedOperationException("Not supported for Usergrid");
+   }
+   * Return an iterable to all the vertices in the graph that have a particular key/value property.
+   * @param key
+   * @param value
+   * @return
+   */
+  public Iterable<Vertex> getVertices(String key, Object value) {
+    return null;
+  }
+
+
 
     /**
      * {
@@ -396,19 +428,8 @@ public class UsergridGraph implements Graph {
         return null;
     }
 
-    /**
-     * {
-     * throw new UnsupportedOperationException("Not supported for Usergrid");
-     * }
-     * Return an iterable to all the vertices in the graph that have a particular key/value property.
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public Iterable<Vertex> getVertices(String key, Object value) {
-        return null;
-    }
+
+
 
 
     /**
