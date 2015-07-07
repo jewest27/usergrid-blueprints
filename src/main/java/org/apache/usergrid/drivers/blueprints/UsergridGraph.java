@@ -254,13 +254,14 @@ public class UsergridGraph implements Graph {
 
 
           if (id instanceof String) {
+
               String[] parts = id.toString().split(":");
               String type = parts[0];
               String StringUUID = parts[1];
               UsergridVertex v = new UsergridVertex(type);
               client.createEntity(v);
               v.save();
-              v.setProperty("name",StringUUID);
+              //v.setProperty("name",StringUUID);
               return v;
           }
 
