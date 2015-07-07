@@ -250,9 +250,13 @@ public class UsergridGraph implements Graph {
       assertClientInitialized();
 
           if (id instanceof String) {
-              UsergridVertex v = new UsergridVertex("person");
+              String[] parts = id.toString().split(":");
+              String type = parts[0];
+              String StringUUID = parts[1];
+              UsergridVertex v = new UsergridVertex(type);
               client.createEntity(v);
               v.save();
+              v.setProperty("name",StringUUID);
               return v;
           }
           /*
@@ -372,7 +376,6 @@ public class UsergridGraph implements Graph {
 
   public void removeVertex(Vertex vertex) {
 
-
      /*
      1) Check if client is initialized
      2) Check if vertex exists
@@ -381,6 +384,12 @@ public class UsergridGraph implements Graph {
      4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
      5) Return null if no vertex is referenced by the identifier
      */
+      String id = vertex.getId().toString();
+      String[] parts = id.split(":");
+      String type = parts[0];
+      String StringUUID = parts[1];
+      ApiResponse response = SingletonClient.getInstance().deleteEntity(type, StringUUID);
+      System.out.println(response);
 
 
 
@@ -395,6 +404,7 @@ public class UsergridGraph implements Graph {
    */
   public Iterable<Vertex> getVertices() {
     // need to be able to page
+
     return null;
   }
 
