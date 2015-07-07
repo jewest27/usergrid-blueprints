@@ -4,13 +4,50 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.usergrid.java.client.Client;
-
+import org.apache.usergrid.java.client.entities.*;
 import java.util.Set;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
-public class UsergridEdge implements UsergridChangedThing, Edge {
+public class UsergridEdge extends Connection implements UsergridChangedThing,Edge {
+
+
+  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label, Client client) {
+    String sourceID = outV.getType()+":"+outV.getUuid();
+    String targetId = inV.getType()+":"+inV.getUuid();
+    setId(sourceID,label,targetId);
+  }
+
+
+  /**
+   * sets the property id for the given connection as
+                              <sourecetype:uuid>/<label>/<targettype:uuid>
+   * @param sourceID
+   * @param label
+   * @param targetId
+   */
+  private void setId(String sourceID, String label, String targetId) {
+    assertClientInitialized();
+    this.setConnectionID(sourceID, label, targetId);
+  }
+
+  /**
+   *
+   * should return the Id for the given edge. <sourecetype:uuid>/<label>/<targettype:uuid>
+   * @return
+   */
+  public String getId() {
+    /*
+    1. check if client is initialized.
+    2. check if the edge is valid.
+    3. return the edge id.
+     */
+    assertClientInitialized();
+    //TODO: check if edge is valid.
+    return this.getPropertyId();
+  }
+
 
 
   /**
@@ -111,19 +148,11 @@ public class UsergridEdge implements UsergridChangedThing, Edge {
      */
   }
 
-
-  /**
-   *
-   * should return the Id for the given edge.
-   * @return
-   */
-  public Object getId() {
-
-    /*
-    1. check if client is initialized.
-    2. check if the edge is valid.
-    3. return the edge id.
-     */
-    return null;
+  protected void assertClientInitialized() {
+    if (this.getClientConnection() == null) {
+      //TODO: Initialize client? OR throw exception?
+      throw new IllegalArgumentException("Client is not initialized");
+    }
   }
+
 }
