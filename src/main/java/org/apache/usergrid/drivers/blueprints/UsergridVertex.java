@@ -9,6 +9,7 @@ import org.apache.usergrid.java.client.entities.Entity;
 
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
@@ -138,13 +139,11 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public Object getId() {
-
-      return null;
-
-      //String type = this.getType();
-      //String StringUUID = this.getUuid().toString();
-      //String id = type+":"+StringUUID;
-      //return id;
+      
+      String ObjectType = this.getType();
+      UUID ObjectUUID = this.getUuid();
+      String id = ObjectType+":"+ObjectUUID;
+      return id;
 
   }
 

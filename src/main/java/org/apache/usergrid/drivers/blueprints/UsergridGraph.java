@@ -254,14 +254,14 @@ public class UsergridGraph implements Graph {
 
 
           if (id instanceof String) {
-
               String[] parts = id.toString().split(":");
-              String type = parts[0];
-              String StringUUID = parts[1];
-              UsergridVertex v = new UsergridVertex(type);
-              client.createEntity(v);
-              v.save();
-              //v.setProperty("name",StringUUID);
+              String VertexType = parts[0];
+              String VertexUUID = parts[1];
+              UsergridVertex v = new UsergridVertex(VertexType);
+              ApiResponse response = client.createEntity(v);
+              String uuid = response.getFirstEntity().getStringProperty("uuid");
+              v.setUuid(UUID.fromString(uuid));
+              //v.setProperty("name",VertexUUID);
               return v;
           }
 
@@ -279,7 +279,6 @@ public class UsergridGraph implements Graph {
         throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
 
     }
-
 
     protected void assertClientInitialized() {
         if (client == null) {
@@ -305,7 +304,6 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-
         if (id instanceof String) {
             return getVertexByString((String) id);
         } else {
@@ -324,8 +322,7 @@ public class UsergridGraph implements Graph {
      * @param id
      * @return
      */
-
-    private Vertex getVertexByEntityId(EntityId id)
+    private Vertex getVertexByEntityId(EntityId id) {
      /*
      1) Check if client is initialized
      2) Check that id is of EntityId (type)
@@ -333,14 +330,12 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-    {
 
         ApiResponse response = SingletonClient.getInstance().queryEntity(id.type, id.UUID);
         String uuid = response.getFirstEntity().getStringProperty("uuid");
         UsergridVertex v = new UsergridVertex(id.type);
         v.setUuid(UUID.fromString(uuid));
         return v;
-
     }
 
 
@@ -366,7 +361,6 @@ public class UsergridGraph implements Graph {
         UsergridVertex v = new UsergridVertex(type);
         v.setUuid(UUID.fromString(uuid));
         return v;
-
     }
 
 
@@ -375,7 +369,6 @@ public class UsergridGraph implements Graph {
      *
      * @param vertex
      */
-
     public void removeVertex(Vertex vertex) {
 
      /*
@@ -386,20 +379,15 @@ public class UsergridGraph implements Graph {
      4) Delete the vertex //TODO: The method delete() is defined in org.apache.usergrid.java.client.entities but has not been implemented
      5) Return null if no vertex is referenced by the identifier
      */
+
       String id = vertex.getId().toString();
       String[] parts = id.split(":");
       String type = parts[0];
       String StringUUID = parts[1];
-      ApiResponse response = SingletonClient.getInstance().deleteEntity(type, StringUUID);
-      System.out.println(response);
+      SingletonClient.getInstance().deleteEntity(type, StringUUID);
 
 
     }
-
-
-
-
-
 
   /**
    * {
@@ -415,7 +403,6 @@ public class UsergridGraph implements Graph {
   }
 
 
-
     /**
      * {
      * throw new UnsupportedOperationException("Not supported for Usergrid");
@@ -428,9 +415,6 @@ public class UsergridGraph implements Graph {
         // need to be able to page
         return null;
     }
-
-
-
 
 
     /**
