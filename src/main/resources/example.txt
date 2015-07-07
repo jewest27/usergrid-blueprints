@@ -1,0 +1,31 @@
+
+
+PUT /v1/visits/v2
+
+
+source -- "name", timestamp --> target
+
+
+Id (s, "name", target)
+
+GET /v1/visits/v2 => 200 (exists), or 404 (no edge)
+
+GET /v2/connecting => incoming edges to v2
+
+
+
+v1 -- source+"name" --> intermediate entity --> target+ "name" --> v2
+
+edge = "likes"
+startedOn = 06/01/2015
+endedOn = 07/01/2015
+
+
+v1 -- source(likes) --> { "startedOn": "06/01/2015", "endedOn":"07/01/2015"} -- target(likes) --> v2
+
+
+
+GET /v1/source(likes);ql=startedOn > 06/02/2015/target(likes)?ql=order by created date desc
+
+//confirm
+getedge("s:name:t")
