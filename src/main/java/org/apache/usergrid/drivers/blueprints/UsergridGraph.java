@@ -9,6 +9,7 @@ import org.apache.usergrid.java.client.SingletonClient;
 import org.apache.usergrid.java.client.response.ApiResponse;
 //import org.apache.usergrid.java.client.model.EntityId;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.UUID;
@@ -297,44 +298,42 @@ public class UsergridGraph implements Graph {
      */
 
 
-    if (id instanceof String) {
-      return getVertexByString((String) id);
-    } else {
-      if (id instanceof EntityId) {
-        return getVertexByEntityId((EntityId) id);
-      }
-    }
+        if (id instanceof String) {
+            return getVertexByString((String) id);
+        } else {
+            if (id instanceof EntityId) {
+                return getVertexByEntityId((EntityId) id);
+            }
+        }
 
         throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
     }
 
 
+    /**
+     * This gets a particular vertex using the Entity ID.
+     *
+     * @param id
+     * @return
+     */
 
-  /**
-   * This gets a particular vertex using the Entity ID.
-   * @param id
-   * @return
-   */
+    private Vertex getVertexByEntityId(EntityId id)
+     /*
+     1) Check if client is initialized
+     2) Check that id is of EntityId (type)
+     3) Get and return the entity
+     4) Return null if no vertex is referenced by the identifier
+     */
 
-  private Vertex getVertexByEntityId(EntityId id)
-//     /*
-//     1) Check if client is initialized
-//     2) Check that id is of EntityId (type)
-//     3) Get and return the entity
-//     4) Return null if no vertex is referenced by the identifier
-//     */
-//    return null;
-//  }
-  {
+    {
 
+        ApiResponse response = SingletonClient.getInstance().queryEntity(id.type, id.UUID);
+        String uuid = response.getFirstEntity().getStringProperty("uuid");
+        UsergridVertex v = new UsergridVertex(id.type);
+        v.setUuid(UUID.fromString(uuid));
+        return v;
 
-      ApiResponse response = SingletonClient.getInstance().queryEntity(id.type,id.UUID);
-      String uuid = response.getFirstEntity().getStringProperty("uuid");
-      UsergridVertex v = new UsergridVertex(id.type) ;
-      v.setUuid(UUID.fromString(uuid));
-      return v;
-
-  }
+    }
 
 
     /**
@@ -351,23 +350,23 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-      String[] parts = id.split(":");
-      String type = parts[0];
-      String StringUUID = parts[1];
-      ApiResponse response = SingletonClient.getInstance().queryEntity(type,StringUUID);
-      String uuid = response.getFirstEntity().getStringProperty("uuid");
-      UsergridVertex v = new UsergridVertex(type) ;
-      v.setUuid(UUID.fromString(uuid));
-      return v;
+        String[] parts = id.split(":");
+        String type = parts[0];
+        String StringUUID = parts[1];
+        ApiResponse response = SingletonClient.getInstance().queryEntity(type, StringUUID);
+        String uuid = response.getFirstEntity().getStringProperty("uuid");
+        UsergridVertex v = new UsergridVertex(type);
+        v.setUuid(UUID.fromString(uuid));
+        return v;
 
     }
 
 
-
-  /**
-   * This deletes a particular vertex (entity) by taking the vertex as an identifier
-   * @param vertex
-   */
+    /**
+     * This deletes a particular vertex (entity) by taking the vertex as an identifier
+     *
+     * @param vertex
+     */
 
     public void removeVertex(Vertex vertex) {
 
@@ -423,20 +422,33 @@ public class UsergridGraph implements Graph {
      */
     public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
 
-    /*
-    1. Check client initialized.
-    2. Check if the two vertices are valid.
-    3. Retrieve the EntityIds of the two entities
-    3. Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
-    4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
-     */
+        /*
+        1. Check client initialized.
+        2. Check if the two vertices are valid.
+        3. Retrieve the EntityIds of the two entities
+        3. Call connectEntities( String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
+        4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
+         */
 
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex ,(UsergridVertex) inVertex ,label);
+        //Check client initialized.
         assertClientInitialized();
+
+        //check if the connection name is passed.
         if (label == null)
             throw new IllegalArgumentException("label not specified");
-        client.connectEntities(e);
-        e.save();
+
+        //TODO : will uncomment once getId for vertex is implemented.
+//        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
+//            throw new IllegalArgumentException("the vertices to connect are invalid");
+//        }
+
+        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
+        UsergridVertex source = (UsergridVertex) outVertex;
+        UsergridVertex target = (UsergridVertex) inVertex;
+
+        client.connectEntities(source, target, label);
+
+//        System.out.println("prop id : " + e.getId());
         return e;
 
     }
