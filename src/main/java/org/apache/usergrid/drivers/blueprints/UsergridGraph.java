@@ -444,9 +444,9 @@ public class UsergridGraph implements Graph {
             throw new IllegalArgumentException("label not specified");
 
         //TODO : will uncomment once getId for vertex is implemented.
-//        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
-//            throw new IllegalArgumentException("the vertices to connect are invalid");
-//        }
+        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
+            throw new IllegalArgumentException("the vertices to connect are invalid");
+        }
 
         UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label);
         UsergridVertex source = (UsergridVertex) outVertex;
@@ -502,8 +502,19 @@ public class UsergridGraph implements Graph {
     2. Get the connection(or edge) by the Id //TODO : how to retrieve an edge.
     3. Check if the edge is a valid edge.
     4. call disconnectEntities(String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
-
     */
+
+        assertClientInitialized();
+        String edgeId = edge.getId().toString();
+
+        String[] properties = ((String) edgeId).split("-->");
+        String label = properties[1];
+
+        UsergridVertex srcVertex = (UsergridVertex)getVertex(properties[0]);
+        UsergridVertex trgVertex = (UsergridVertex)getVertex(properties[2]);
+
+        client.disconnectEntities(srcVertex,trgVertex,label);
+
     }
 
     /**
