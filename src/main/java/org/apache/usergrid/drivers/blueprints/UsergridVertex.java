@@ -1,5 +1,6 @@
 package org.apache.usergrid.drivers.blueprints;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -70,6 +71,13 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
     return null;
   }
 
+
+    /**
+     * Adds edge
+     * @param label
+     * @param inVertex
+     * @return
+     */
   public Edge addEdge(String label, Vertex inVertex) {
       /**
        1) Check if the vertex exists
@@ -88,6 +96,8 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public <T> T getProperty(String key) {
+
+      return null;
       /**
        1) Check if the vertex exists
        2) Use the void setProperty(String name, float/String/long/int/boolean/JsonNode value) in
@@ -95,7 +105,6 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
        3) If any other type throw an error
        */
 
-    return null;
   }
 
   /**
@@ -117,7 +126,36 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @param value
    */
   public void setProperty(String key, Object value) {
-//    Client.changed(this);
+
+
+      if (value instanceof String) {
+          super.setProperty(key, (String) value);
+      }
+
+      else if (value instanceof JsonNode){
+          super.setProperty(key, (JsonNode) value);
+      }
+
+      else if (value instanceof Integer){
+          super.setProperty(key, (Integer) value);
+
+      }
+
+      else if (value instanceof Float){
+          super.setProperty(key, (Float) value);
+      }
+
+      else if (value instanceof Boolean){
+          super.setProperty(key, (Boolean) value);
+      }
+
+      else if (value instanceof Long){
+          super.setProperty(key, (Long) value);
+      }
+
+      else {
+          throw new IllegalArgumentException("Supplied id class of " + String.valueOf(value.getClass()) + " is not supported");
+      }
   }
 
   /**
@@ -127,10 +165,18 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public <T> T removeProperty(String key) {
-    return null;
+
+      JsonNode oldValue = super.properties.get(key);
+      super.properties.remove(key);
+      return (T) oldValue;
   }
 
+    /**
+     * Removes or deletes the vertex or entity
+     */
   public void remove() {
+
+      this.delete();
 
   }
 
@@ -139,7 +185,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    * @return
    */
   public Object getId() {
-      
+
       String ObjectType = this.getType();
       UUID ObjectUUID = this.getUuid();
       String id = ObjectType+":"+ObjectUUID;
@@ -154,11 +200,9 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
   @Override
   public void setType(String newType) {
     if (newType.equals(super.getType())) {
-      //no op
+      //Do nothing
     } else {
-      this.delete();
       super.setType(newType);
-      this.save();
     }
   }
 }
