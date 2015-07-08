@@ -31,6 +31,7 @@ public class TestConnection {
         String edgeId = v1.getId()+"-->Visits-->"+v2.getId();
        Edge e3 = usergrid.getEdge(edgeId);
 
+        System.out.println("label : " + e3.getLabel());
         usergrid.removeEdge(e1);
 
     }
