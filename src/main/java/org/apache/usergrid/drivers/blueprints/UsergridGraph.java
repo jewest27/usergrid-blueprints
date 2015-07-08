@@ -481,7 +481,7 @@ public class UsergridGraph implements Graph {
         String label = properties[1];
 
         Vertex srcVertex = getVertex(properties[0]);
-        Vertex trgVertex = getTargetVertex((UsergridVertex) srcVertex,label);  // returns the target edge.
+        Vertex trgVertex = getVertex(properties[2]);
 
         Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label);
 
@@ -489,23 +489,6 @@ public class UsergridGraph implements Graph {
         return connection;
     }
 
-    /**
-     * gets the target vertex given source and edgename.
-     * @return
-     */
-    public Vertex getTargetVertex(UsergridVertex src, String label){
-
-        String srcType =src.getType();
-        String srcId = src.getUuid().toString();
-
-        //gets the target vertex
-        ApiResponse response = client.queryConnection(srcType,srcId,label);
-        String trgUUID = response.getFirstEntity().getStringProperty("uuid");
-        String trgType = response.getFirstEntity().getStringProperty("type");
-        Vertex trgVertex = getVertex(trgType+":"+trgUUID);
-
-        return trgVertex;
-    }
 
     /**
      * This function removes the connection between two entities in the graph
