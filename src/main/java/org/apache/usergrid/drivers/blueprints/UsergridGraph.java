@@ -448,7 +448,7 @@ public class UsergridGraph implements Graph {
 //            throw new IllegalArgumentException("the vertices to connect are invalid");
 //        }
 
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
+        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label);
         UsergridVertex source = (UsergridVertex) outVertex;
         UsergridVertex target = (UsergridVertex) inVertex;
 
@@ -469,13 +469,42 @@ public class UsergridGraph implements Graph {
     public Edge getEdge(Object id) {
 
     /*
-    //TODO: Define the ObjectId for an edge, liek how we have for a vertex.
-
     1. Get the client. Check if client initialzed.
-    2. Get the edge using the type of the edge. // TODO : how to retrieve an edge in usergrid. multiple edges have the same name, how to distinguish ?
-    3. Return the connection(or edge).
+    2. Get the source vertex.
+    3. Get the target vertex.
+    4. Return the connection(or edge).
      */
-        return null;
+        //Check client initialized.
+        assertClientInitialized();
+
+        String[] properties = ((String) id).split("-->");
+        String label = properties[1];
+
+        Vertex srcVertex = getVertex(properties[0]);
+        Vertex trgVertex = getTargetVertex((UsergridVertex) srcVertex,label);  // returns the target edge.
+
+        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label);
+
+        System.out.println("connection : " + connection.getId());
+        return connection;
+    }
+
+    /**
+     * gets the target vertex given source and edgename.
+     * @return
+     */
+    public Vertex getTargetVertex(UsergridVertex src, String label){
+
+        String srcType =src.getType();
+        String srcId = src.getUuid().toString();
+
+        //gets the target vertex
+        ApiResponse response = client.queryConnection(srcType,srcId,label);
+        String trgUUID = response.getFirstEntity().getStringProperty("uuid");
+        String trgType = response.getFirstEntity().getStringProperty("type");
+        Vertex trgVertex = getVertex(trgType+":"+trgUUID);
+
+        return trgVertex;
     }
 
     /**
