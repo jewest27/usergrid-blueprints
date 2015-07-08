@@ -444,11 +444,11 @@ public class UsergridGraph implements Graph {
             throw new IllegalArgumentException("label not specified");
 
         //TODO : will uncomment once getId for vertex is implemented.
-//        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
-//            throw new IllegalArgumentException("the vertices to connect are invalid");
-//        }
+        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
+            throw new IllegalArgumentException("the vertices to connect are invalid");
+        }
 
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
+        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label);
         UsergridVertex source = (UsergridVertex) outVertex;
         UsergridVertex target = (UsergridVertex) inVertex;
 
@@ -469,14 +469,26 @@ public class UsergridGraph implements Graph {
     public Edge getEdge(Object id) {
 
     /*
-    //TODO: Define the ObjectId for an edge, liek how we have for a vertex.
-
     1. Get the client. Check if client initialzed.
-    2. Get the edge using the type of the edge. // TODO : how to retrieve an edge in usergrid. multiple edges have the same name, how to distinguish ?
-    3. Return the connection(or edge).
+    2. Get the source vertex.
+    3. Get the target vertex.
+    4. Return the connection(or edge).
      */
-        return null;
+        //Check client initialized.
+        assertClientInitialized();
+
+        String[] properties = ((String) id).split("-->");
+        String label = properties[1];
+
+        Vertex srcVertex = getVertex(properties[0]);
+        Vertex trgVertex = getVertex(properties[2]);
+
+        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label);
+
+        System.out.println("connection : " + connection.getId());
+        return connection;
     }
+
 
     /**
      * This function removes the connection between two entities in the graph
@@ -490,8 +502,19 @@ public class UsergridGraph implements Graph {
     2. Get the connection(or edge) by the Id //TODO : how to retrieve an edge.
     3. Check if the edge is a valid edge.
     4. call disconnectEntities(String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
-
     */
+
+        assertClientInitialized();
+        String edgeId = edge.getId().toString();
+
+        String[] properties = ((String) edgeId).split("-->");
+        String label = properties[1];
+
+        UsergridVertex srcVertex = (UsergridVertex)getVertex(properties[0]);
+        UsergridVertex trgVertex = (UsergridVertex)getVertex(properties[2]);
+
+        client.disconnectEntities(srcVertex,trgVertex,label);
+
     }
 
     /**

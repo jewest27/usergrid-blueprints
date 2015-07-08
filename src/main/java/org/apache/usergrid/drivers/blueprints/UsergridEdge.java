@@ -13,7 +13,7 @@ import java.util.Set;
 public class UsergridEdge extends Connection implements UsergridChangedThing,Edge {
 
 
-  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label, Client client) {
+  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label) {
     String sourceID = outV.getType()+":"+outV.getUuid();
     String targetId = inV.getType()+":"+inV.getUuid();
     setId(sourceID,label,targetId);
@@ -28,7 +28,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
    * @param targetId
    */
   private void setId(String sourceID, String label, String targetId) {
-    assertClientInitialized();
+//    assertClientInitialized();
     this.setConnectionID(sourceID, label, targetId);
   }
 
@@ -43,7 +43,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
     2. check if the edge is valid.
     3. return the edge id.
      */
-    assertClientInitialized();
+   //  assertClientInitialized();
     //TODO: check if edge is valid.
     return this.getPropertyId();
   }
