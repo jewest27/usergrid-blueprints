@@ -448,7 +448,7 @@ public class UsergridGraph implements Graph {
             throw new IllegalArgumentException("the vertices to connect are invalid");
         }
 
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label);
+        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
         UsergridVertex source = (UsergridVertex) outVertex;
         UsergridVertex target = (UsergridVertex) inVertex;
 
@@ -483,7 +483,7 @@ public class UsergridGraph implements Graph {
         Vertex srcVertex = getVertex(properties[0]);
         Vertex trgVertex = getVertex(properties[2]);
 
-        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label);
+        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label,client);
 
         System.out.println("connection : " + connection.getId());
         return connection;

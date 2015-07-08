@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.Vertex;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.*;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
@@ -13,10 +14,16 @@ import java.util.Set;
 public class UsergridEdge extends Connection implements UsergridChangedThing,Edge {
 
 
-  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label) {
+  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label,Client client) {
     String sourceID = outV.getType()+":"+outV.getUuid();
     String targetId = inV.getType()+":"+inV.getUuid();
     setId(sourceID,label,targetId);
+    setLabel(label);
+    setClientConnection(client);
+  }
+
+  public void setLabel(String label) {
+    super.setLabel(label);
   }
 
 
@@ -29,7 +36,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
    */
   private void setId(String sourceID, String label, String targetId) {
 //    assertClientInitialized();
-    this.setConnectionID(sourceID, label, targetId);
+    super.setConnectionID(sourceID + "-->" + label + "-->" + targetId);
   }
 
   /**
@@ -45,7 +52,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
      */
    //  assertClientInitialized();
     //TODO: check if edge is valid.
-    return this.getPropertyId();
+    return super.getPropertyId();
   }
 
 
@@ -55,17 +62,41 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
    * Return the label associated with the edge.
    *
    * @return
-   */
-  public String getLabel() {
+   */public String getLabel() {
 
     /*
     1. get the client connection. check if its initialized.
-    2. get the timestamp associated with the entity. // Confirm.
+    2. TODO: get the timestamp/label associated with the entity. // Confirm.
      */
-
-    return null;
+    return super.getLabel();
   }
 
+
+  /**
+   * removes the edge
+   */
+  public void remove() {
+    /*
+    1. check client is initialized.
+    2.check if the connection/edge is valid
+    3. delete the connection . check : disconnectEntities in client.java
+     */
+
+    //TODO: validate the edge.
+    Client client = getClientConnection();
+    String edgeId = this.getId().toString();
+    String[] properties = ((String) edgeId).split("-->");
+    String label = properties[1];
+    String[] source = properties[0].split(":");
+    String[] target = properties[2].split(":");
+
+    UsergridVertex srcVertex = new UsergridVertex(source[0]);
+    srcVertex.setUuid(UUID.fromString(source[1]));
+
+    UsergridVertex trgVertex = new UsergridVertex(target[0]);
+    trgVertex.setUuid(UUID.fromString(target[1]));
+    client.disconnectEntities(srcVertex,trgVertex,label);
+  }
 
   public void onChanged(Client client) {
 
@@ -135,18 +166,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
     return null;
   }
 
-  /**
-   * removes the edge
-   */
-  public void remove() {
 
-
-    /*
-    1. check client is initialized.
-    2.check if the connection/edge is valid
-    3. delete the connection . check : disconnectEntities in client.java
-     */
-  }
 
   protected void assertClientInitialized() {
     if (this.getClientConnection() == null) {
