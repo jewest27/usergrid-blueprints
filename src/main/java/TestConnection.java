@@ -20,6 +20,7 @@ public class TestConnection {
         System.out.println("id v2 :: " +usergrid.getVertex(v2.getId()));
 
         Vertex v3 = usergrid.addVertex("restaurant:CPK");
+        System.out.println("id v3 :: " +usergrid.getVertex(v3.getId()));
 
 
         //Object eId = "type:visits";
@@ -28,11 +29,13 @@ public class TestConnection {
         Edge e2 = usergrid.addEdge(null,v1,v3,"visits");
 
         //passing object id as string sourceId-->label-->targetId
-        String edgeId = v1.getId()+"-->Visits-->"+v2.getId();
+        String edgeId = v1.getId()+"-->visits-->"+v2.getId();
        Edge e3 = usergrid.getEdge(edgeId);
 
         System.out.println("label : " + e3.getLabel());
-        usergrid.removeEdge(e1);
+
+        e3.remove();
+        //usergrid.removeEdge(e1);
 
     }
 }

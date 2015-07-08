@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.Vertex;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.*;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
@@ -35,7 +36,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
    */
   private void setId(String sourceID, String label, String targetId) {
 //    assertClientInitialized();
-    super.setConnectionID(sourceID+"-->"+label+"-->"+targetId);
+    super.setConnectionID(sourceID + "-->" + label + "-->" + targetId);
   }
 
   /**
@@ -82,9 +83,19 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
      */
 
     //TODO: validate the edge.
+    Client client = getClientConnection();
+    String edgeId = this.getId().toString();
+    String[] properties = ((String) edgeId).split("-->");
+    String label = properties[1];
+    String[] source = properties[0].split(":");
+    String[] target = properties[2].split(":");
 
+    UsergridVertex srcVertex = new UsergridVertex(source[0]);
+    srcVertex.setUuid(UUID.fromString(source[1]));
 
-
+    UsergridVertex trgVertex = new UsergridVertex(target[0]);
+    trgVertex.setUuid(UUID.fromString(target[1]));
+    client.disconnectEntities(srcVertex,trgVertex,label);
   }
 
   public void onChanged(Client client) {
