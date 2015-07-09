@@ -252,7 +252,6 @@ public class UsergridGraph implements Graph {
 
         assertClientInitialized();
 
-
           if (id instanceof String) {
               String[] parts = id.toString().split(":");
               String VertexType = parts[0];
@@ -261,7 +260,7 @@ public class UsergridGraph implements Graph {
               ApiResponse response = client.createEntity(v);
               String uuid = response.getFirstEntity().getStringProperty("uuid");
               v.setUuid(UUID.fromString(uuid));
-              //v.setProperty("name",VertexUUID);
+              v.setProperty("name",VertexUUID);
               return v;
           }
 
