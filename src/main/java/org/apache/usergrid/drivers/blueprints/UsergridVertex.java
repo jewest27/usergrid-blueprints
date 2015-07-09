@@ -7,6 +7,11 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.Entity;
+import org.apache.usergrid.java.client.response.ApiResponse;
+import org.springframework.http.HttpMethod;
+import org.apache.usergrid.java.client.*;
+
+
 
 
 import java.util.Set;
@@ -97,7 +102,8 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
    */
   public <T> T getProperty(String key) {
 
-      return null;
+      T propertyValue = (T)super.getStringProperty(key);
+      return propertyValue;
       /**
        1) Check if the vertex exists
        2) Use the void setProperty(String name, float/String/long/int/boolean/JsonNode value) in
@@ -156,6 +162,9 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
       else {
           throw new IllegalArgumentException("Supplied id class of " + String.valueOf(value.getClass()) + " is not supported");
       }
+
+    super.save();
+
   }
 
   /**
@@ -168,6 +177,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
 
       JsonNode oldValue = super.properties.get(key);
       super.properties.remove(key);
+      super.save();
       return (T) oldValue;
   }
 
@@ -176,7 +186,7 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
      */
   public void remove() {
 
-      this.delete();
+      super.delete();
 
   }
 
