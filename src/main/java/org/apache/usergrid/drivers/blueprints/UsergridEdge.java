@@ -126,6 +126,22 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
      */
 
 
+    String edgeId = this.getId().toString();
+    String[] properties = ((String) edgeId).split("-->");
+    String[] source = properties[0].split(":");
+    String[] target = properties[2].split(":");
+
+    switch (direction){
+      case OUT:
+        UsergridVertex srcVertex = new UsergridVertex(source[0]);
+        srcVertex.setUuid(UUID.fromString(source[1]));
+        return  srcVertex; //return source vertex
+      case IN:
+        UsergridVertex trgVertex = new UsergridVertex(target[0]);
+        trgVertex.setUuid(UUID.fromString(target[1]));
+        return trgVertex;  // return target vertex
+    }
+
     return null;
   }
 
@@ -169,7 +185,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
 
   protected void assertClientInitialized() {
-    if (this.getClientConnection() == null) {
+    if (super.getClientConnection() == null) {
       //TODO: Initialize client? OR throw exception?
       throw new IllegalArgumentException("Client is not initialized");
     }
