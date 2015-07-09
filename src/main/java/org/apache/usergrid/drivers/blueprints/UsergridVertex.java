@@ -90,8 +90,9 @@ public class UsergridVertex extends Entity implements Vertex , UsergridChangedTh
        connectingEntityId, String connectionType, String connectedEntityId) in org.apache.usergrid.java.client
        3) Return the newly created edge
        */
-
-    return null;
+      UsergridEdge e = new UsergridEdge(this,(UsergridVertex) inVertex,label, UsergridGraph.client);
+      UsergridGraph.client.connectEntities(this, (UsergridVertex) inVertex, label);
+    return e;
   }
 
   /**

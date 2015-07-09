@@ -182,7 +182,7 @@ public class UsergridGraph implements Graph {
         features.supportsThreadIsolatedTransactions = Boolean.FALSE;
     }
 
-    private Client client;
+    public static Client client;
     private String defaultType;
 
     protected void getClient() {
@@ -448,13 +448,10 @@ public class UsergridGraph implements Graph {
             throw new IllegalArgumentException("the vertices to connect are invalid");
         }
 
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label);
+        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
         UsergridVertex source = (UsergridVertex) outVertex;
         UsergridVertex target = (UsergridVertex) inVertex;
-
         client.connectEntities(source, target, label);
-
-//        System.out.println("prop id : " + e.getId());
         return e;
 
     }
@@ -483,7 +480,7 @@ public class UsergridGraph implements Graph {
         Vertex srcVertex = getVertex(properties[0]);
         Vertex trgVertex = getVertex(properties[2]);
 
-        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label);
+        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label,client);
 
         System.out.println("connection : " + connection.getId());
         return connection;
