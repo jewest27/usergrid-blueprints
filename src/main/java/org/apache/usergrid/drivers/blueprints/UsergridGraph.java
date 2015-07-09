@@ -182,7 +182,7 @@ public class UsergridGraph implements Graph {
         features.supportsThreadIsolatedTransactions = Boolean.FALSE;
     }
 
-    private Client client;
+    public static Client client;
     private String defaultType;
 
     protected void getClient() {
@@ -451,10 +451,7 @@ public class UsergridGraph implements Graph {
         UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
         UsergridVertex source = (UsergridVertex) outVertex;
         UsergridVertex target = (UsergridVertex) inVertex;
-
         client.connectEntities(source, target, label);
-
-//        System.out.println("prop id : " + e.getId());
         return e;
 
     }

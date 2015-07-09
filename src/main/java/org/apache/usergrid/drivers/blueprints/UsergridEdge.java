@@ -35,7 +35,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
    * @param targetId
    */
   private void setId(String sourceID, String label, String targetId) {
-//    assertClientInitialized();
+    assertClientInitialized();
     super.setConnectionID(sourceID + "-->" + label + "-->" + targetId);
   }
 
@@ -50,7 +50,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
     2. check if the edge is valid.
     3. return the edge id.
      */
-   //  assertClientInitialized();
+     assertClientInitialized();
     //TODO: check if edge is valid.
     return super.getPropertyId();
   }
@@ -185,7 +185,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
 
   protected void assertClientInitialized() {
-    if (super.getClientConnection() == null) {
+    if (UsergridGraph.client == null) {
       //TODO: Initialize client? OR throw exception?
       throw new IllegalArgumentException("Client is not initialized");
     }

@@ -23,6 +23,7 @@ public class TestConnection {
         System.out.println("id v3 :: " +usergrid.getVertex(v3.getId()));
 
 
+        v1.addEdge("likes",v2);
         //Object eId = "type:visits";
         Edge e1 = usergrid.addEdge(null,v1,v2,"visits");
         //e1.getId();
