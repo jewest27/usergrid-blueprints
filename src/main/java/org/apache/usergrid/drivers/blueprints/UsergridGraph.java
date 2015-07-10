@@ -196,10 +196,12 @@ public class UsergridGraph implements Graph {
 
 //TODO: Change to appropriate location
         if (config == null) {
-            throw new IllegalArgumentException("Check the configuration settings");
+            throw new IllegalArgumentException("Check the configuration settings for Usergrid");
         }
+
         this.defaultType = config.getString("usergrid.defaultType");
 
+        //Configuration of Usergrid
         String orgName = config.getString("usergrid.organization");
         String appName = config.getString("usergrid.application");
         String apiUrl = config.getString("usergrid.apiUrl");
@@ -208,7 +210,7 @@ public class UsergridGraph implements Graph {
 
 
         if (orgName == null || appName == null) {
-            throw new RuntimeException("Check the configuration settings. OrgName or App name is null");
+            throw new RuntimeException("Check the configuration settings. Organization name or App name for Usergrid is null");
         }
 
         if (apiUrl == null)
@@ -216,10 +218,11 @@ public class UsergridGraph implements Graph {
         else
             SingletonClient.initialize(apiUrl, orgName, appName);
 
+        //Get an instance of the client
         client = SingletonClient.getInstance();
 
+        //Authorize the Application with the credentials provided in the Configuration file
         client.authorizeAppClient(clientId, clientSecret);
-
 
     }
 
@@ -241,7 +244,6 @@ public class UsergridGraph implements Graph {
      * @return the newly created vertex
      */
     public Vertex addVertex(Object id) {
-
       /*
      1) Check if client is initialized
      2) Check that id is of supported type, else throw IllegalArgumentException error
@@ -249,7 +251,6 @@ public class UsergridGraph implements Graph {
       in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
-
         assertClientInitialized();
 
           if (id instanceof String) {
@@ -265,26 +266,19 @@ public class UsergridGraph implements Graph {
           }
 
 
-          /*
+        /*
           else if (id instanceof EntityId){
               //TODO: Add logic that separates the type and entity ID and use the type during creation
               UsergridVertex v = new UsergridVertex(defaultType);
               client.createEntity(v);
               v.save();
               return v;
-
-      }
-*/
-        throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
+              }
+        */
+        throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
 
     }
 
-    protected void assertClientInitialized() {
-        if (client == null) {
-            //TODO: Initialize client? OR throw exception?
-            throw new IllegalArgumentException("Client is not initialized");
-        }
-    }
 
     /**
      * This gets a particular Vertex (entity) using the ID of the vertex
@@ -538,6 +532,14 @@ public class UsergridGraph implements Graph {
 
     public GraphQuery query() {
         return null;
+    }
+
+
+    protected void assertClientInitialized() {
+        if (client == null) {
+            //TODO: Initialize client? OR throw exception?
+            throw new IllegalArgumentException("Client is not initialized");
+        }
     }
 
     /**
