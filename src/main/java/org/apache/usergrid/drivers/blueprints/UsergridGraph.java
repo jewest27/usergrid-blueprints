@@ -19,182 +19,188 @@ import java.util.UUID;
  */
 public class UsergridGraph implements Graph {
 
-    private static Features features;
+  public static final String COLON = ":";
+  public static final String STRING_UUID = "uuid";
+  public static final String STRING_NAME = "name";
+  public static final String ARROW_CONNECTOR = "-->";
 
-    static {
-        features = new Features();
-        /**
-         * Does the graph allow for two edges with the same vertices and edge label to exist?
-         */
-        features.supportsDuplicateEdges = Boolean.FALSE;
+  private static Features features;
 
-        /**
-         * Does the graph allow an edge to have the same out/tail and in/head vertex?
-         */
-        features.supportsSelfLoops = Boolean.FALSE;
-
-        /**
-         * Does the graph allow any serializable object to be used as a property value for a graph element?
-         */
-        features.supportsSerializableObjectProperty = Boolean.FALSE;
-
-        /**
-         * Does the graph allows boolean to be used as a property value for a graph element?
-         */
-        features.supportsBooleanProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows double to be used as a property value for a graph element?
-         */
-        features.supportsDoubleProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows float to be used as a property value for a graph element?
-         */
-        features.supportsFloatProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows integer to be used as a property value for a graph element?
-         */
-        features.supportsIntegerProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows a primitive array to be used as a property value for a graph element?
-         */
-        features.supportsPrimitiveArrayProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows list (all objects with the list have the same data types) to be used as a property
-         * value for a graph element?
-         */
-        features.supportsUniformListProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows a mixed list (different data types within the same list) to be used as a
-         * property value for a graph element?
-         */
-        features.supportsMixedListProperty = Boolean.FALSE;
-
-        /**
-         * Does the graph allows long to be used as a property value for a graph element?
-         */
-        features.supportsLongProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph allows map to be used as a property value for a graph element?
-         */
-        features.supportsMapProperty = Boolean.TRUE;
-
-        /**
-         * Graph allows string to be used as a property value for a graph element.
-         */
-        features.supportsStringProperty = Boolean.TRUE;
-
-        /**
-         * Does the graph return elements not explicitly created with addVertex or addEdge?
-         */
-        features.hasImplicitElements = Boolean.TRUE;
-
-        /**
-         * Does the graph ignore user provided ids in graph.addVertex(Object id)?
-         */
-        features.ignoresSuppliedIds = Boolean.FALSE;
-
-        /**
-         * Does the graph persist the graph to disk after shutdown?
-         */
-        features.isPersistent = Boolean.TRUE;
-
-        /**
-         * Does the graph implement WrapperGraph?
-         */
-        features.isWrapper = Boolean.FALSE;
-
-        /**
-         * Does the graph implement IndexableGraph?
-         */
-        features.supportsIndices = Boolean.FALSE;
-
-        /**
-         * Does the graph support the indexing of vertices by their properties?
-         */
-        features.supportsVertexIndex = Boolean.FALSE;
-
-        /**
-         * Does the graph support the indexing of edges by their properties?
-         */
-        features.supportsEdgeIndex = Boolean.FALSE;
-
-        /**
-         * Does the graph implement KeyIndexableGraph?
-         */
-        features.supportsKeyIndices = Boolean.FALSE;
-
-        /**
-         * Does the graph support key indexing on vertices?
-         */
-        features.supportsVertexKeyIndex = Boolean.FALSE;
-
-        /**
-         * Does the graph support key indexing on edges?
-         */
-        features.supportsEdgeKeyIndex = Boolean.FALSE;
-
-        /**
-         * Does the graph support graph.getEdges()?
-         */
-        features.supportsEdgeIteration = Boolean.FALSE;
-
-        /**
-         * Does the graph support graph.getVertices()?
-         */
-        features.supportsVertexIteration = Boolean.FALSE;
-
-        /**
-         * Does the graph support retrieving edges by id, i.e. graph.getEdge(Object id)?
-         */
-        features.supportsEdgeRetrieval = Boolean.FALSE;
-
-        /**
-         * Does the graph support setting and retrieving properties on vertices?
-         */
-        features.supportsVertexProperties = Boolean.TRUE;
-
-        /**
-         * Does the graph support setting and retrieving properties on edges?
-         */
-        features.supportsEdgeProperties = Boolean.FALSE;
-
-        /**
-         * Does the graph implement TransactionalGraph?
-         */
-        features.supportsTransactions = Boolean.FALSE;
-
-        /**
-         * Does the graph implement ThreadedTransactionalGraph?
-         */
-        features.supportsThreadedTransactions = Boolean.FALSE;
-
-        /**
-         * Does the graph support transactions managed such that multiple threads operating on the same graph instance
-         * can have isolated transactions?
-         */
-        features.supportsThreadIsolatedTransactions = Boolean.FALSE;
-    }
-
-    public static Client client;
-    private String defaultType;
-
-    protected void getClient() {
-
-    }
+  static {
+    features = new Features();
+    /**
+     * Does the graph allow for two edges with the same vertices and edge label to exist?
+     */
+    features.supportsDuplicateEdges = Boolean.FALSE;
 
     /**
-     * @param config
+     * Does the graph allow an edge to have the same out/tail and in/head vertex?
      */
-    public UsergridGraph(Configuration config) {
+    features.supportsSelfLoops = Boolean.FALSE;
+
+    /**
+     * Does the graph allow any serializable object to be used as a property value for a graph element?
+     */
+    features.supportsSerializableObjectProperty = Boolean.FALSE;
+
+    /**
+     * Does the graph allows boolean to be used as a property value for a graph element?
+     */
+    features.supportsBooleanProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows double to be used as a property value for a graph element?
+     */
+    features.supportsDoubleProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows float to be used as a property value for a graph element?
+     */
+    features.supportsFloatProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows integer to be used as a property value for a graph element?
+     */
+    features.supportsIntegerProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows a primitive array to be used as a property value for a graph element?
+     */
+    features.supportsPrimitiveArrayProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows list (all objects with the list have the same data types) to be used as a property
+     * value for a graph element?
+     */
+    features.supportsUniformListProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows a mixed list (different data types within the same list) to be used as a
+     * property value for a graph element?
+     */
+    features.supportsMixedListProperty = Boolean.FALSE;
+
+    /**
+     * Does the graph allows long to be used as a property value for a graph element?
+     */
+    features.supportsLongProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph allows map to be used as a property value for a graph element?
+     */
+    features.supportsMapProperty = Boolean.TRUE;
+
+    /**
+     * Graph allows string to be used as a property value for a graph element.
+     */
+    features.supportsStringProperty = Boolean.TRUE;
+
+    /**
+     * Does the graph return elements not explicitly created with addVertex or addEdge?
+     */
+    features.hasImplicitElements = Boolean.TRUE;
+
+    /**
+     * Does the graph ignore user provided ids in graph.addVertex(Object id)?
+     */
+    features.ignoresSuppliedIds = Boolean.FALSE;
+
+    /**
+     * Does the graph persist the graph to disk after shutdown?
+     */
+    features.isPersistent = Boolean.TRUE;
+
+    /**
+     * Does the graph implement WrapperGraph?
+     */
+    features.isWrapper = Boolean.FALSE;
+
+    /**
+     * Does the graph implement IndexableGraph?
+     */
+    features.supportsIndices = Boolean.FALSE;
+
+    /**
+     * Does the graph support the indexing of vertices by their properties?
+     */
+    features.supportsVertexIndex = Boolean.FALSE;
+
+    /**
+     * Does the graph support the indexing of edges by their properties?
+     */
+    features.supportsEdgeIndex = Boolean.FALSE;
+
+    /**
+     * Does the graph implement KeyIndexableGraph?
+     */
+    features.supportsKeyIndices = Boolean.FALSE;
+
+    /**
+     * Does the graph support key indexing on vertices?
+     */
+    features.supportsVertexKeyIndex = Boolean.FALSE;
+
+    /**
+     * Does the graph support key indexing on edges?
+     */
+    features.supportsEdgeKeyIndex = Boolean.FALSE;
+
+    /**
+     * Does the graph support graph.getEdges()?
+     */
+    features.supportsEdgeIteration = Boolean.FALSE;
+
+    /**
+     * Does the graph support graph.getVertices()?
+     */
+    features.supportsVertexIteration = Boolean.FALSE;
+
+    /**
+     * Does the graph support retrieving edges by id, i.e. graph.getEdge(Object id)?
+     */
+    features.supportsEdgeRetrieval = Boolean.FALSE;
+
+    /**
+     * Does the graph support setting and retrieving properties on vertices?
+     */
+    features.supportsVertexProperties = Boolean.TRUE;
+
+    /**
+     * Does the graph support setting and retrieving properties on edges?
+     */
+    features.supportsEdgeProperties = Boolean.FALSE;
+
+    /**
+     * Does the graph implement TransactionalGraph?
+     */
+    features.supportsTransactions = Boolean.FALSE;
+
+    /**
+     * Does the graph implement ThreadedTransactionalGraph?
+     */
+    features.supportsThreadedTransactions = Boolean.FALSE;
+
+    /**
+     * Does the graph support transactions managed such that multiple threads operating on the same graph instance
+     * can have isolated transactions?
+     */
+    features.supportsThreadIsolatedTransactions = Boolean.FALSE;
+  }
+
+  public static Client client;
+  private String defaultType;
+
+  protected void getClient() {
+
+  }
+
+  /**
+   * @param config
+   */
+  public UsergridGraph(Configuration config) {
 
 //TODO: Change to appropriate location
+
         if (config == null) {
             throw new IllegalArgumentException("Check the configuration settings for Usergrid");
         }
@@ -213,10 +219,11 @@ public class UsergridGraph implements Graph {
             throw new RuntimeException("Check the configuration settings. Organization name or App name for Usergrid is null");
         }
 
-        if (apiUrl == null)
-            SingletonClient.initialize(orgName, appName);
-        else
-            SingletonClient.initialize(apiUrl, orgName, appName);
+    if (apiUrl == null)
+      SingletonClient.initialize(orgName, appName);
+    else
+      SingletonClient.initialize(apiUrl, orgName, appName);
+
 
         //Get an instance of the client
         client = SingletonClient.getInstance();
@@ -226,14 +233,15 @@ public class UsergridGraph implements Graph {
 
     }
 
-    /**
-     * This returns all the features that the Blueprint supports for Usergrid.
-     *
-     * @return
-     */
-    public Features getFeatures() {
-        return features;
-    }
+
+  /**
+   * This returns all the features that the Blueprint supports for Usergrid.
+   *
+   * @return
+   */
+  public Features getFeatures() {
+    return features;
+  }
 
 
     /**
@@ -244,6 +252,7 @@ public class UsergridGraph implements Graph {
      * @return the newly created vertex
      */
     public Vertex addVertex(Object id) {
+
       /*
      1) Check if client is initialized
      2) Check that id is of supported type, else throw IllegalArgumentException error
@@ -251,19 +260,23 @@ public class UsergridGraph implements Graph {
       in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
-        assertClientInitialized();
 
-          if (id instanceof String) {
-              String[] parts = id.toString().split(":");
-              String VertexType = parts[0];
-              String VertexUUID = parts[1];
-              UsergridVertex v = new UsergridVertex(VertexType);
-              ApiResponse response = client.createEntity(v);
-              String uuid = response.getFirstEntity().getStringProperty("uuid");
-              v.setUuid(UUID.fromString(uuid));
-              v.setProperty("name",VertexUUID);
-              return v;
-          }
+
+    assertClientInitialized();
+
+    if (id instanceof String) {
+      String[] parts = id.toString().split(COLON);
+      String VertexType = parts[0];
+      String VertexName = parts[1];
+      UsergridVertex v = new UsergridVertex(VertexType);
+      v.setLocalProperty(STRING_NAME, VertexName);
+      v.setLocalProperty("_ugName", VertexName);
+      v.setLocalProperty("_ugBlueprintsId", id);
+      ApiResponse response = client.createEntity(v);
+      String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
+      v.setUuid(UUID.fromString(uuid));
+      return v;
+    }
 
 
         /*
@@ -273,21 +286,25 @@ public class UsergridGraph implements Graph {
               client.createEntity(v);
               v.save();
               return v;
+
               }
         */
         throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
 
-    }
+
+      }
 
 
-    /**
-     * This gets a particular Vertex (entity) using the ID of the vertex
-     *
-     * @param id
-     * @return
-     */
 
-    public Vertex getVertex(Object id) {
+
+  /**
+   * This gets a particular Vertex (entity) using the ID of the vertex
+   *
+   * @param id
+   * @return
+   */
+
+  public Vertex getVertex(Object id) {
 
     /*
      1) Check if client is initialized
@@ -297,25 +314,25 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-        if (id instanceof String) {
-            return getVertexByString((String) id);
-        } else {
-            if (id instanceof EntityId) {
-                return getVertexByEntityId((EntityId) id);
-            }
-        }
-
-        throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
+    if (id instanceof String) {
+      return getVertexByString((String) id);
+    } else {
+      if (id instanceof EntityId) {
+        return getVertexByEntityId((EntityId) id);
+      }
     }
 
+    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
+  }
 
-    /**
-     * This gets a particular vertex using the Entity ID.
-     *
-     * @param id
-     * @return
-     */
-    private Vertex getVertexByEntityId(EntityId id) {
+
+  /**
+   * This gets a particular vertex using the Entity ID.
+   *
+   * @param id
+   * @return
+   */
+  private Vertex getVertexByEntityId(EntityId id) {
      /*
      1) Check if client is initialized
      2) Check that id is of EntityId (type)
@@ -323,22 +340,21 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
+    ApiResponse response = SingletonClient.getInstance().queryEntity(id.type, id.UUID);
+    String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
+    UsergridVertex v = new UsergridVertex(id.type);
+    v.setUuid(UUID.fromString(uuid));
+    return v;
+  }
 
-        ApiResponse response = SingletonClient.getInstance().queryEntity(id.type, id.UUID);
-        String uuid = response.getFirstEntity().getStringProperty("uuid");
-        UsergridVertex v = new UsergridVertex(id.type);
-        v.setUuid(UUID.fromString(uuid));
-        return v;
-    }
 
-
-    /**
-     * This gets a vertex by ID (String)
-     *
-     * @param id
-     * @return
-     */
-    private Vertex getVertexByString(String id) {
+  /**
+   * This gets a vertex by ID (String)
+   *
+   * @param id
+   * @return
+   */
+  private Vertex getVertexByString(String id) {
      /*
      1) Check if client is initialized
      2) Check that id is a string (type)
@@ -346,23 +362,23 @@ public class UsergridGraph implements Graph {
      4) Return null if no vertex is referenced by the identifier
      */
 
-        String[] parts = id.split(":");
-        String type = parts[0];
-        String StringUUID = parts[1];
-        ApiResponse response = SingletonClient.getInstance().queryEntity(type, StringUUID);
-        String uuid = response.getFirstEntity().getStringProperty("uuid");
-        UsergridVertex v = new UsergridVertex(type);
-        v.setUuid(UUID.fromString(uuid));
-        return v;
-    }
+    String[] parts = id.split(COLON);
+    String type = parts[0];
+    String StringUUID = parts[1];
+    ApiResponse response = SingletonClient.getInstance().queryEntity(type, StringUUID);
+    String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
+    UsergridVertex v = new UsergridVertex(type);
+    v.setUuid(UUID.fromString(uuid));
+    return v;
+  }
 
 
-    /**
-     * This deletes a particular vertex (entity) by taking the vertex as an identifier
-     *
-     * @param vertex
-     */
-    public void removeVertex(Vertex vertex) {
+  /**
+   * This deletes a particular vertex (entity) by taking the vertex as an identifier
+   *
+   * @param vertex
+   */
+  public void removeVertex(Vertex vertex) {
 
      /*
      1) Check if client is initialized
@@ -373,20 +389,19 @@ public class UsergridGraph implements Graph {
      5) Return null if no vertex is referenced by the identifier
      */
 
-      String id = vertex.getId().toString();
-      String[] parts = id.split(":");
-      String type = parts[0];
-      String StringUUID = parts[1];
-      SingletonClient.getInstance().deleteEntity(type, StringUUID);
-
-
-    }
+    String id = vertex.getId().toString();
+    String[] parts = id.split(COLON);
+    String type = parts[0];
+    String StringUUID = parts[1];
+    SingletonClient.getInstance().deleteEntity(type, StringUUID);
+  }
 
   /**
    * {
-   throw new UnsupportedOperationException("Not supported for Usergrid");
-   }
+   * throw new UnsupportedOperationException("Not supported for Usergrid");
+   * }
    * Return an iterable to all the vertices in the graph that have a particular key/value property.
+   *
    * @param key
    * @param value
    * @return
@@ -396,30 +411,30 @@ public class UsergridGraph implements Graph {
   }
 
 
-    /**
-     * {
-     * throw new UnsupportedOperationException("Not supported for Usergrid");
-     * }
-     * Returns an iterable to all the vertices in the graph.
-     *
-     * @return
-     */
-    public Iterable<Vertex> getVertices() {
-        // need to be able to page
-        return null;
-    }
+  /**
+   * {
+   * throw new UnsupportedOperationException("Not supported for Usergrid");
+   * }
+   * Returns an iterable to all the vertices in the graph.
+   *
+   * @return
+   */
+  public Iterable<Vertex> getVertices() {
+    // need to be able to page
+    return null;
+  }
 
 
-    /**
-     * This function adds a connection (or an edge) between two vertices
-     *
-     * @param id
-     * @param outVertex
-     * @param inVertex
-     * @param label
-     * @return
-     */
-    public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+  /**
+   * This function adds a connection (or an edge) between two vertices
+   *
+   * @param id
+   * @param outVertex
+   * @param inVertex
+   * @param label
+   * @return
+   */
+  public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
 
         /*
         1. Check client initialized.
@@ -429,34 +444,34 @@ public class UsergridGraph implements Graph {
         4. Return the connection(or edge) // TODO : currently returns ApiResponse. Should return an edge.
          */
 
-        //Check client initialized.
-        assertClientInitialized();
+    //Check client initialized.
+    assertClientInitialized();
 
-        //check if the connection name is passed.
-        if (label == null)
-            throw new IllegalArgumentException("label not specified");
+    //check if the connection name is passed.
+    if (label == null)
+      throw new IllegalArgumentException("label not specified");
 
-        //TODO : will uncomment once getId for vertex is implemented.
-        if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null){
-            throw new IllegalArgumentException("the vertices to connect are invalid");
-        }
-
-        UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label,client);
-        UsergridVertex source = (UsergridVertex) outVertex;
-        UsergridVertex target = (UsergridVertex) inVertex;
-        client.connectEntities(source, target, label);
-        return e;
-
+    //TODO : will uncomment once getId for vertex is implemented.
+    if (getVertex(outVertex.getId()) == null || getVertex(inVertex.getId()) == null) {
+      throw new IllegalArgumentException("the vertices to connect are invalid");
     }
 
-    /**
-     * This function returns a connection (or edge). Takes the Connection id as an input.
-     *
-     * @param id
-     * @return
-     */
+    UsergridEdge e = new UsergridEdge((UsergridVertex) outVertex, (UsergridVertex) inVertex, label, client);
+    UsergridVertex source = (UsergridVertex) outVertex;
+    UsergridVertex target = (UsergridVertex) inVertex;
+    client.connectEntities(source, target, label);
+    return e;
 
-    public Edge getEdge(Object id) {
+  }
+
+  /**
+   * This function returns a connection (or edge). Takes the Connection id as an input.
+   *
+   * @param id
+   * @return
+   */
+
+  public Edge getEdge(Object id) {
 
     /*
     1. Get the client. Check if client initialzed.
@@ -464,28 +479,28 @@ public class UsergridGraph implements Graph {
     3. Get the target vertex.
     4. Return the connection(or edge).
      */
-        //Check client initialized.
-        assertClientInitialized();
+    //Check client initialized.
+    assertClientInitialized();
 
-        String[] properties = ((String) id).split("-->");
-        String label = properties[1];
+    String[] properties = ((String) id).split(ARROW_CONNECTOR);
+    String label = properties[1];
 
-        Vertex srcVertex = getVertex(properties[0]);
-        Vertex trgVertex = getVertex(properties[2]);
+    Vertex srcVertex = getVertex(properties[0]);
+    Vertex trgVertex = getVertex(properties[2]);
 
-        Edge connection = new UsergridEdge((UsergridVertex)srcVertex,(UsergridVertex)trgVertex,label,client);
+    Edge connection = new UsergridEdge((UsergridVertex) srcVertex, (UsergridVertex) trgVertex, label, client);
 
-        System.out.println("connection : " + connection.getId());
-        return connection;
-    }
+    System.out.println("connection : " + connection.getId());
+    return connection;
+  }
 
 
-    /**
-     * This function removes the connection between two entities in the graph
-     *
-     * @param edge
-     */
-    public void removeEdge(Edge edge) {
+  /**
+   * This function removes the connection between two entities in the graph
+   *
+   * @param edge
+   */
+  public void removeEdge(Edge edge) {
 
     /*
     1. Get the client. Check if its intitialzed.
@@ -494,45 +509,45 @@ public class UsergridGraph implements Graph {
     4. call disconnectEntities(String connectingEntityType, String connectingEntityId, String connectionType, String connectedEntityId)
     */
 
-        assertClientInitialized();
-        String edgeId = edge.getId().toString();
+    assertClientInitialized();
+    String edgeId = edge.getId().toString();
 
-        String[] properties = ((String) edgeId).split("-->");
-        String label = properties[1];
+    String[] properties = ((String) edgeId).split(ARROW_CONNECTOR);
+    String label = properties[1];
 
-        UsergridVertex srcVertex = (UsergridVertex)getVertex(properties[0]);
-        UsergridVertex trgVertex = (UsergridVertex)getVertex(properties[2]);
+    UsergridVertex srcVertex = (UsergridVertex) getVertex(properties[0]);
+    UsergridVertex trgVertex = (UsergridVertex) getVertex(properties[2]);
 
-        client.disconnectEntities(srcVertex,trgVertex,label);
+    client.disconnectEntities(srcVertex, trgVertex, label);
 
-    }
+  }
 
-    /**
-     * Not Implemented for Usergrid
-     *
-     * @return
-     */
+  /**
+   * Not Implemented for Usergrid
+   *
+   * @return
+   */
 
-    public Iterable<Edge> getEdges() {
-        throw new UnsupportedOperationException("Not supported for Usergrid");
-    }
+  public Iterable<Edge> getEdges() {
+    throw new UnsupportedOperationException("Not supported for Usergrid");
+  }
 
-    /**
-     * Not implemented for Usergrid.
-     * Return an iterable to all the edges in the graph that have a particular key/value property.
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public Iterable<Edge> getEdges(String key, Object value) {
-        throw new UnsupportedOperationException("Not supported for Usergrid");
-    }
+  /**
+   * Not implemented for Usergrid.
+   * Return an iterable to all the edges in the graph that have a particular key/value property.
+   *
+   * @param key
+   * @param value
+   * @return
+   */
+  public Iterable<Edge> getEdges(String key, Object value) {
+    throw new UnsupportedOperationException("Not supported for Usergrid");
+  }
 
 
-    public GraphQuery query() {
-        return null;
-    }
+  public GraphQuery query() {
+    return null;
+  }
 
 
     protected void assertClientInitialized() {
@@ -546,10 +561,12 @@ public class UsergridGraph implements Graph {
      * Closes the client connection. Properly close the graph.
      */
     public void shutdown() {
+
+
     /*
     1. Check the client initialized.
     2. Close the connection to Usergrid.
     3. Error handling if closeConnection() failed.
      */
-    }
+  }
 }

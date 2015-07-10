@@ -1,7 +1,4 @@
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.GraphFactory;
-import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.*;
 
 /**
  * Created by ayeshadastagiri on 7/8/15.
@@ -24,18 +21,25 @@ public class TestConnection {
 
 
         v1.addEdge("likes",v2);
-        //Object eId = "type:visits";
-        Edge e1 = usergrid.addEdge(null,v1,v2,"visits");
-        //e1.getId();
-        Edge e2 = usergrid.addEdge(null,v1,v3,"visits");
+        v1.addEdge("visits",v2);
+        v1.addEdge("visits",v3);
 
-        //passing object id as string sourceId-->label-->targetId
+       //v1.getEdges(Direction.OUT);
+
         String edgeId = v1.getId()+"-->visits-->"+v2.getId();
-       Edge e3 = usergrid.getEdge(edgeId);
-
+        Edge e3 = usergrid.getEdge(edgeId);
         System.out.println("label : " + e3.getLabel());
 
-        e3.remove();
+
+        //Object eId = "type:visits";
+//        Edge e1 = usergrid.addEdge(null,v1,v2,"visits");
+//        //e1.getId();
+//        Edge e2 = usergrid.addEdge(null,v1,v3,"visits");
+//
+//        //passing object id as string sourceId-->label-->targetId
+
+//
+//        e3.remove();
         //usergrid.removeEdge(e1);
 
     }
