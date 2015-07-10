@@ -5,19 +5,23 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.*;
+
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
-public class UsergridEdge extends Connection implements UsergridChangedThing,Edge {
+public class UsergridEdge extends Connection implements UsergridChangedThing, Edge {
 
 
-  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label,Client client) {
-    String sourceID = outV.getType()+":"+outV.getUuid();
-    String targetId = inV.getType()+":"+inV.getUuid();
-    setId(sourceID,label,targetId);
+  public static final String ARROW_CONNECTOR = "-->";
+  public static final String COLON = ":";
+
+  public UsergridEdge(UsergridVertex outV, UsergridVertex inV, String label, Client client) {
+    String sourceID = outV.getType() + COLON + outV.getUuid();
+    String targetId = inV.getType() + COLON + inV.getUuid();
+    setId(sourceID, label, targetId);
     setLabel(label);
     setClientConnection(client);
   }
@@ -29,19 +33,20 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
   /**
    * sets the property id for the given connection as
-                              <sourecetype:uuid>/<label>/<targettype:uuid>
+   * <sourecetype:uuid>/<label>/<targettype:uuid>
+   *
    * @param sourceID
    * @param label
    * @param targetId
    */
   private void setId(String sourceID, String label, String targetId) {
     assertClientInitialized();
-    super.setConnectionID(sourceID + "-->" + label + "-->" + targetId);
+    super.setConnectionID(sourceID + ARROW_CONNECTOR + label + ARROW_CONNECTOR + targetId);
   }
 
   /**
-   *
    * should return the Id for the given edge. <sourecetype:uuid>/<label>/<targettype:uuid>
+   *
    * @return
    */
   public String getId() {
@@ -50,19 +55,18 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
     2. check if the edge is valid.
     3. return the edge id.
      */
-     assertClientInitialized();
+    assertClientInitialized();
     //TODO: check if edge is valid.
     return super.getPropertyId();
   }
 
 
-
   /**
-   *
    * Return the label associated with the edge.
    *
    * @return
-   */public String getLabel() {
+   */
+  public String getLabel() {
 
     /*
     1. get the client connection. check if its initialized.
@@ -84,18 +88,18 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
     //TODO: validate the edge.
     Client client = getClientConnection();
-    String edgeId = this.getId().toString();
-    String[] properties = ((String) edgeId).split("-->");
+    String edgeId = this.getId();
+    String[] properties = edgeId.split(ARROW_CONNECTOR);
     String label = properties[1];
-    String[] source = properties[0].split(":");
-    String[] target = properties[2].split(":");
+    String[] source = properties[0].split(COLON);
+    String[] target = properties[2].split(COLON);
 
     UsergridVertex srcVertex = new UsergridVertex(source[0]);
     srcVertex.setUuid(UUID.fromString(source[1]));
 
     UsergridVertex trgVertex = new UsergridVertex(target[0]);
     trgVertex.setUuid(UUID.fromString(target[1]));
-    client.disconnectEntities(srcVertex,trgVertex,label);
+    client.disconnectEntities(srcVertex, trgVertex, label);
   }
 
   public void onChanged(Client client) {
@@ -104,8 +108,8 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
 
   /**
+   * Return the tail/out or head/in vertex.
    *
-   *  Return the tail/out or head/in vertex.
    * @param direction
    * @return
    * @throws IllegalArgumentException
@@ -127,15 +131,15 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
 
     String edgeId = this.getId().toString();
-    String[] properties = ((String) edgeId).split("-->");
-    String[] source = properties[0].split(":");
-    String[] target = properties[2].split(":");
+    String[] properties = ((String) edgeId).split(ARROW_CONNECTOR);
+    String[] source = properties[0].split(COLON);
+    String[] target = properties[2].split(COLON);
 
-    switch (direction){
+    switch (direction) {
       case OUT:
         UsergridVertex srcVertex = new UsergridVertex(source[0]);
         srcVertex.setUuid(UUID.fromString(source[1]));
-        return  srcVertex; //return source vertex
+        return srcVertex; //return source vertex
       case IN:
         UsergridVertex trgVertex = new UsergridVertex(target[0]);
         trgVertex.setUuid(UUID.fromString(target[1]));
@@ -147,6 +151,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
   /**
    * Not implementing for the usergrid blueprints.
+   *
    * @param key
    * @param <T>
    * @return
@@ -157,6 +162,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
   /**
    * Not implementing for the usergrid blueprints.
+   *
    * @return
    */
   public Set<String> getPropertyKeys() {
@@ -165,6 +171,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
   /**
    * Not implementing for the usergrid blueprints.
+   *
    * @param key
    * @param value
    */
@@ -174,6 +181,7 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
 
   /**
    * Not implementing for the usergrid blueprints.
+   *
    * @param key
    * @param <T>
    * @return
@@ -181,7 +189,6 @@ public class UsergridEdge extends Connection implements UsergridChangedThing,Edg
   public <T> T removeProperty(String key) {
     return null;
   }
-
 
 
   protected void assertClientInitialized() {
