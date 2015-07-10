@@ -23,6 +23,7 @@ public class UsergridGraph implements Graph {
   public static final String STRING_UUID = "uuid";
   public static final String STRING_NAME = "name";
   public static final String ARROW_CONNECTOR = "-->";
+
   private static Features features;
 
   static {
@@ -199,33 +200,39 @@ public class UsergridGraph implements Graph {
   public UsergridGraph(Configuration config) {
 
 //TODO: Change to appropriate location
-    if (config == null) {
-      throw new IllegalArgumentException("Check the configuration settings");
-    }
-    this.defaultType = config.getString("usergrid.defaultType");
 
-    String orgName = config.getString("usergrid.organization");
-    String appName = config.getString("usergrid.application");
-    String apiUrl = config.getString("usergrid.apiUrl");
-    String clientId = config.getString("usergrid.client_id");
-    String clientSecret = config.getString("usergrid.client_secret");
+        if (config == null) {
+            throw new IllegalArgumentException("Check the configuration settings for Usergrid");
+        }
+
+        this.defaultType = config.getString("usergrid.defaultType");
+
+        //Configuration of Usergrid
+        String orgName = config.getString("usergrid.organization");
+        String appName = config.getString("usergrid.application");
+        String apiUrl = config.getString("usergrid.apiUrl");
+        String clientId = config.getString("usergrid.client_id");
+        String clientSecret = config.getString("usergrid.client_secret");
 
 
-    if (orgName == null || appName == null) {
-      throw new RuntimeException("Check the configuration settings. OrgName or App name is null");
-    }
+        if (orgName == null || appName == null) {
+            throw new RuntimeException("Check the configuration settings. Organization name or App name for Usergrid is null");
+        }
 
     if (apiUrl == null)
       SingletonClient.initialize(orgName, appName);
     else
       SingletonClient.initialize(apiUrl, orgName, appName);
 
-    client = SingletonClient.getInstance();
 
-    client.authorizeAppClient(clientId, clientSecret);
+        //Get an instance of the client
+        client = SingletonClient.getInstance();
 
+        //Authorize the Application with the credentials provided in the Configuration file
+        client.authorizeAppClient(clientId, clientSecret);
 
-  }
+    }
+
 
   /**
    * This returns all the features that the Blueprint supports for Usergrid.
@@ -237,14 +244,14 @@ public class UsergridGraph implements Graph {
   }
 
 
-  /**
-   * This calls the client and create a new entity in the default collection
-   * using the ID.toString() as the name of the entity. It returns the newly created vertex.
-   *
-   * @param id - The value of id.toString would be used for the name
-   * @return the newly created vertex
-   */
-  public Vertex addVertex(Object id) {
+    /**
+     * This calls the client and create a new entity in the default collection
+     * using the ID.toString() as the name of the entity. It returns the newly created vertex.
+     *
+     * @param id - The value of id.toString would be used for the name
+     * @return the newly created vertex
+     */
+    public Vertex addVertex(Object id) {
 
       /*
      1) Check if client is initialized
@@ -253,6 +260,7 @@ public class UsergridGraph implements Graph {
       in org.apache.usergrid.java.client
      4) Return the newly created vertex
      */
+
 
     assertClientInitialized();
 
@@ -270,7 +278,8 @@ public class UsergridGraph implements Graph {
       return v;
     }
 
-          /*
+
+        /*
           else if (id instanceof EntityId){
               //TODO: Add logic that separates the type and entity ID and use the type during creation
               UsergridVertex v = new UsergridVertex(defaultType);
@@ -278,18 +287,15 @@ public class UsergridGraph implements Graph {
               v.save();
               return v;
 
+              }
+        */
+        throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
+
+
       }
-*/
-    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
 
-  }
 
-  protected void assertClientInitialized() {
-    if (client == null) {
-      //TODO: Initialize client? OR throw exception?
-      throw new IllegalArgumentException("Usergrid Client is not initialized");
-    }
-  }
+
 
   /**
    * This gets a particular Vertex (entity) using the ID of the vertex
@@ -316,7 +322,7 @@ public class UsergridGraph implements Graph {
       }
     }
 
-    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported");
+    throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
   }
 
 
@@ -333,7 +339,6 @@ public class UsergridGraph implements Graph {
      3) Get and return the entity
      4) Return null if no vertex is referenced by the identifier
      */
-
 
     ApiResponse response = SingletonClient.getInstance().queryEntity(id.type, id.UUID);
     String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
@@ -544,10 +549,20 @@ public class UsergridGraph implements Graph {
     return null;
   }
 
-  /**
-   * Closes the client connection. Properly close the graph.
-   */
-  public void shutdown() {
+
+    protected void assertClientInitialized() {
+        if (client == null) {
+            //TODO: Initialize client? OR throw exception?
+            throw new IllegalArgumentException("Client is not initialized");
+        }
+    }
+
+    /**
+     * Closes the client connection. Properly close the graph.
+     */
+    public void shutdown() {
+
+
     /*
     1. Check the client initialized.
     2. Close the connection to Usergrid.
