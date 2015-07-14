@@ -1,5 +1,6 @@
 package org.apache.usergrid.drivers.blueprints;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.tinkerpop.blueprints.*;
@@ -10,9 +11,8 @@ import org.apache.usergrid.java.client.response.ApiResponse;
 //import org.apache.usergrid.java.client.model.EntityId;
 
 import javax.swing.text.html.parser.Entity;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
@@ -23,6 +23,7 @@ public class UsergridGraph implements Graph {
   public static final String STRING_UUID = "uuid";
   public static final String STRING_NAME = "name";
   public static final String ARROW_CONNECTOR = "-->";
+  public static final String STRING_DUPLICATE_PROPERTY = "duplicate_unique_property_exists";
 
   private static Features features;
 
@@ -263,8 +264,13 @@ public class UsergridGraph implements Graph {
 
 
     assertClientInitialized();
+    ValidationUtils.validateNotNull(id,RuntimeException.class,"id cannot be of type null");
+
 
     if (id instanceof String) {
+
+      ValidationUtils.validateStringNotEmpty((String)id,RuntimeException.class,"id cannot be an empty string");
+
       String[] parts = id.toString().split(COLON);
       String VertexType = parts[0];
       String VertexName = parts[1];
@@ -273,10 +279,18 @@ public class UsergridGraph implements Graph {
       v.setLocalProperty("_ugName", VertexName);
       v.setLocalProperty("_ugBlueprintsId", id);
       ApiResponse response = client.createEntity(v);
+
+      ValidationUtils.serverError(response, IOException.class,"Usergrid server error");
+      ValidationUtils.validateAccess(response,RuntimeException.class,"User forbidden from using the Usergrid resource");
+      ValidationUtils.validateDuplicate(response,RuntimeException.class, "Entity with the name specified already exists");
+      ValidationUtils.validateCredentials(response,RuntimeException.class, "User credentials for Usergrid are invalid");
+      ValidationUtils.validateRequest(response, RuntimeException.class, "Invalid request passed to Usergrid");
+
       String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
       v.setUuid(UUID.fromString(uuid));
       return v;
     }
+
 
 
         /*
@@ -289,8 +303,8 @@ public class UsergridGraph implements Graph {
 
               }
         */
-        throw new IllegalArgumentException("Supplied id class of " + String.valueOf(id.getClass()) + " is not supported by Usergrid");
 
+return null;
 
       }
 
@@ -313,8 +327,10 @@ public class UsergridGraph implements Graph {
      Object> params, Object data, String... segments) in org.apache.usergrid.java.client
      4) Return null if no vertex is referenced by the identifier
      */
-
-    if (id instanceof String) {
+      if (id == null){
+          throw new IllegalArgumentException("Id cannot be null");
+      }
+      else if (id instanceof String) {
       return getVertexByString((String) id);
     } else {
       if (id instanceof EntityId) {
@@ -367,8 +383,15 @@ public class UsergridGraph implements Graph {
     String StringUUID = parts[1];
     ApiResponse response = SingletonClient.getInstance().queryEntity(type, StringUUID);
     String uuid = response.getFirstEntity().getStringProperty(STRING_UUID);
+    Map<String,JsonNode> vertexProperties = new HashMap<String, JsonNode>();
+    vertexProperties = response.getFirstEntity().getProperties();
     UsergridVertex v = new UsergridVertex(type);
     v.setUuid(UUID.fromString(uuid));
+      for (Map.Entry<String, JsonNode> entry : vertexProperties.entrySet()) {
+          String key = entry.getKey();
+          Object value = entry.getValue();
+          v.setLocalProperty(key,value);
+      }
     return v;
   }
 
@@ -540,6 +563,7 @@ public class UsergridGraph implements Graph {
    * @param value
    * @return
    */
+
   public Iterable<Edge> getEdges(String key, Object value) {
     throw new UnsupportedOperationException("Not supported for Usergrid");
   }
