@@ -1,8 +1,11 @@
 import com.tinkerpop.blueprints.*;
 import org.apache.usergrid.drivers.blueprints.EntityId;
 import org.apache.usergrid.drivers.blueprints.UsergridEdge;
+import org.apache.usergrid.drivers.blueprints.UsergridGraph;
 //import org.apache.usergrid.java.client.model.EntityId;
 
+import javax.security.auth.login.Configuration;
+import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -13,7 +16,6 @@ public class TestApp {
 
 
   public static void main(String[] args) {
-
 
     Graph usergrid = GraphFactory.open("src/main/resources/usergrid.properties");
 
@@ -50,12 +52,28 @@ public class TestApp {
 
 
     System.out.println();
-    System.out.println("Getting EDGES");
+    System.out.println("Getting An EDGE");
 //    person:ayesha-->visits-->restaurant:amici
     String edgeId = person1.getId() + "-->visits-->" + restaurant1.getId();
     e3 = usergrid.getEdge(edgeId);
     System.out.println("Get edge : " + e3.getId());
 
+
+    System.out.println("Getting outgoing EDGES");
+    Iterable<Edge> edges = person1.getEdges(Direction.OUT);
+    if (edges != null) {
+    for(Edge each : edges){
+      System.out.println("in test app : "+each.getId());
+    }
+    }
+
+    System.out.println("Getting incoming EDGES");
+    Iterable<Edge> edgesIn = person1.getEdges(Direction.IN);
+    if (edgesIn != null) {
+      for (Edge each : edgesIn) {
+        System.out.println("in test app : " + each.getId());
+      }
+    }
 
 //    System.out.println("Deleting EDGES");
 //
