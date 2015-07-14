@@ -332,7 +332,7 @@ public class UsergridGraph implements Graph {
    * @param id
    * @return
    */
-  private Vertex getVertexByEntityId(EntityId id) {
+  public static Vertex getVertexByEntityId(EntityId id) {
      /*
      1) Check if client is initialized
      2) Check that id is of EntityId (type)
@@ -561,12 +561,14 @@ public class UsergridGraph implements Graph {
      * Closes the client connection. Properly close the graph.
      */
     public void shutdown() {
-
-
     /*
     1. Check the client initialized.
     2. Close the connection to Usergrid.
     3. Error handling if closeConnection() failed.
      */
+
+        assertClientInitialized();
+        client = null;
+        //TODO : get it reviewed.
   }
 }

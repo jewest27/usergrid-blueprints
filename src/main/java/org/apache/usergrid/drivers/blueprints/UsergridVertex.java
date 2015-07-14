@@ -1,6 +1,7 @@
 package org.apache.usergrid.drivers.blueprints;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -8,18 +9,23 @@ import com.tinkerpop.blueprints.VertexQuery;
 import org.apache.usergrid.java.client.Client;
 import org.apache.usergrid.java.client.entities.Entity;
 import org.apache.usergrid.java.client.response.ApiResponse;
+import org.apache.usergrid.java.client.utils.JsonUtils;
 import org.springframework.http.HttpMethod;
 import org.apache.usergrid.java.client.*;
 
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by ApigeeCorporation on 6/29/15.
  */
 public class UsergridVertex extends Entity implements Vertex, UsergridChangedThing {
+  private static String CONNECTIONING = "connecting" ;
   private static String defaultType;
+  private static String METADATA = "metadata";
+  private static String CONNECTIONS = "connections";
+
+
 
   public UsergridVertex(String defaultType) {
     super.setType(defaultType);
@@ -45,7 +51,62 @@ public class UsergridVertex extends Entity implements Vertex, UsergridChangedThi
      3) Return an iterable of edges
      */
 
+    String srcType = this.getType();
+    String srcId = this.getUuid().toString();
+
+    List<Edge> edges = new ArrayList<Edge>();
+    ApiResponse response = UsergridGraph.client.queryEdgesForVertex(srcType, srcId);
+    Entity trgUUID = response.getFirstEntity();
+
+    switch (direction){
+      case  OUT:
+        if(trgUUID.getProperties().get(METADATA).findValue(CONNECTIONS) == null){
+          System.out.println("the vertex doesnt have outgoing edges.");
+          return null;
+        }
+        Iterator<String> connections = trgUUID.getProperties().get(METADATA).findValue(CONNECTIONS).fieldNames();
+        while (connections.hasNext()){
+          String name = connections.next();
+          ApiResponse resp = UsergridGraph.client.queryConnection(srcType,srcId,name);
+          List<Entity> entities = resp.getEntities();
+          edges = getAllEdgesForVertex(entities, name, edges,Direction.OUT);
+        }
+        return edges;
+
+      case  IN:
+        if(trgUUID.getProperties().get(METADATA).findValue(CONNECTIONING) == null){
+          System.out.println("the vertex doesnt have incomming edges.");
+          return null;
+        }
+
+        Iterator<String> connectioning = trgUUID.getProperties().get(METADATA).findValue(CONNECTIONING).fieldNames();
+        while (connectioning.hasNext()){
+          String name = connectioning.next();
+          ApiResponse resp = UsergridGraph.client.queryConnectingEdges(srcType, srcId, CONNECTIONING, name);
+          List<Entity> entities = resp.getEntities();
+          edges = getAllEdgesForVertex(entities, name, edges, Direction.IN);
+        }
+        return edges;
+    }
+
     return null;
+  }
+
+
+  private List<Edge> getAllEdgesForVertex(List<Entity> entities, String name,List<Edge> edges, Direction dir) {
+    for (int i = 0; i < entities.size(); i++) {
+      Entity e = entities.get(i);
+      EntityId entityId = new EntityId(e.getType() + ":" + e.getUuid());
+      Vertex v1 = UsergridGraph.getVertexByEntityId(entityId);
+      UsergridVertex v2 = (UsergridVertex)v1;
+      Edge e1 = null;
+      if (dir == Direction.OUT)
+          e1 = new UsergridEdge(this,v2,name,UsergridGraph.client);
+      else if (dir == Direction.IN)
+          e1 = new UsergridEdge(v2,this,name,UsergridGraph.client);
+      edges.add(e1);
+    }
+    return edges;
   }
 
 
